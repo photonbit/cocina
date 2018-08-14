@@ -13,6 +13,7 @@ except ImportError, err:
 import time
 from collections import namedtuple
 
+
 poemas = [
     {
         "titulo": "Espera",
@@ -234,26 +235,6 @@ recetas = [
     }
 ]
 
-class Cocina(object):
-    # Document Information
-    autor = "Daniel Moreno Medina"
-    info = ""
-    descripcion = ""
-    num_recetas = 4
-    num_poemas = 9
-    num_paginas = (num_recetas + num_poemas) * 2
-
-    # Page formatting
-    SIN_MARGENES = (0, 0, 0, 0)
-    Papel = namedtuple("Papel", ["x", "y"])
-    A3 = Papel(*scribus.PAPER_A3)
-    A4 = Papel(*scribus.PAPER_A4)
-    A5 = Papel(*scribus.PAPER_A5)
-
-    # Master pages
-    receta_A = "recetaDelante"
-    receta_B = "recetaDetras"
-
 
 def main(argv):
     portada = scribus.newDocument(
@@ -267,68 +248,10 @@ def main(argv):
         1  # numPage
     )
     scribus.setInfo(Cocina.autor, Cocina.info, Cocina.descripcion)
-    obra = scribus.newDocument(
-        scribus.PAPER_A4,  # size
-        Cocina.SIN_MARGENES,  # margins
-        scribus.PORTRAIT,  # orientation
-        1,  # firstPageNumber
-        scribus.UNIT_MILLIMETERS,  # unit
-        scribus.PAGE_1,  # pagesType
-        0,  # firstPageOrder
-        Cocina.num_paginas  # numPage
-    )
-    scribus.setInfo(Cocina.autor, Cocina.info, Cocina.descripcion)
 
-    scribus.createMasterPage(Cocina.receta_A)
-    scribus.editMasterPage(Cocina.receta_A)
-    # Cuadro receta
-    scribus.createRect(
-        Cocina.A4.x - Cocina.A5.x,
-        Cocina.A4.y - Cocina.A5.y,
-        Cocina.A5.x,
-        Cocina.A5.y
-    )
-    # Cuadro tecnica
-    scribus.createRect(
-        0,
-        0,
-        Cocina.A4.x,
-        Cocina.A4.y - Cocina.A5.y
-    )
-    # Cuadro anotaciones
-    scribus.createRect(
-        0,
-        Cocina.A4.y - Cocina.A5.y,
-        Cocina.A4.x - Cocina.A5.x,
-        Cocina.A5.y
-    )
-    scribus.closeMasterPage()
 
-    scribus.createMasterPage(Cocina.receta_B)
-    scribus.editMasterPage(Cocina.receta_B)
-    # Cuadro receta
-    scribus.createRect(
-        0,
-        Cocina.A4.y - Cocina.A5.y,
-        Cocina.A5.x,
-        Cocina.A5.y
-    )
-    # Cuadro tecnica
-    scribus.createRect(
-        0,
-        0,
-        Cocina.A4.x,
-        Cocina.A4.y - Cocina.A5.y
-    )
-    # Cuadro anotaciones
-    scribus.createRect(
-        Cocina.A5.x,
-        Cocina.A4.y - Cocina.A5.y,
-        Cocina.A4.x - Cocina.A5.x,
-        Cocina.A5.y
-    )
 
-    scribus.closeMasterPage()
+
 
     estilo_titulo = scribus.createCharStyle(
         name="estilo_titulo",
