@@ -6,7 +6,7 @@ import sys
 try:
     import scribus
 except ImportError, err:
-    print "Esto está escrito para ser ejecutado desde Scribus."
+    print "Esto está pensado para ser ejecutado desde Scribus."
     print "Sin Scribus no hay escrito."
     sys.exit(1)
 

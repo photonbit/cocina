@@ -3,8 +3,6 @@
 
 import sys
 
-from collections import namedtuple
-
 try:
     import scribus
 except ImportError, err:
@@ -12,7 +10,7 @@ except ImportError, err:
     print "It can only be run from within Scribus."
     sys.exit(1)
 
-from obra import Cocina, poemas
+from obra import Cocina
 
 class Punto(object):
     def __init__(self, x, y):
@@ -46,34 +44,40 @@ class Formato(object):
     def crear_estilos(cls):
         estilo_titulo = scribus.createCharStyle(
             name="estilo_titulo",
+            font="Crimson Text Bold",
             features="bold",
             fontsize=18.0
         )
 
         estilo_cuerpo = scribus.createCharStyle(
             name="estilo_cuerpo",
+            font="Lato Regular",
             fontsize=12.0
         )
 
         parrafo_titulo = scribus.createParagraphStyle(
             name="parrafo_titulo",
-            linespacing=2,
             alignment=scribus.ALIGN_LEFT,
             charstyle="estilo_titulo"
         )
 
         parrafo_poema = scribus.createParagraphStyle(
             name="parrafo_poema",
-            linespacing=1.5,
             alignment=scribus.ALIGN_LEFT,
             charstyle="estilo_cuerpo"
         )
         parrafo_receta = scribus.createParagraphStyle(
             name="parrafo_receta",
-            linespacing=1,
             alignment=scribus.ALIGN_BLOCK,
             charstyle="estilo_cuerpo"
         )
+
+    @classmethod
+    def marginar(cls, punto, dimension):
+        p = Punto(punto.x + dimension.x/5, punto.y + dimension.y/6)
+        d = Punto(dimension.x - 2*dimension.x/5, dimension.y - 2*dimension.y/6)
+
+        return p, d
 
 
 class Dimension(object):
@@ -105,11 +109,13 @@ class Espacio(object):
         scribus.createRect(posicion.x, posicion.y, dimension.x, dimension.y)
 
     def cuadro_de_texto(self, posicion, dimension, texto, nombre, estilo = None):
-        scribus.createText(posicion.x, posicion.y, dimension.x, dimension.y, nombre)
+        p, d = Formato.marginar(posicion, dimension)
+        scribus.createText(p.x, p.y, d.x, d.y, nombre)
         self.posicionar(nombre)
         scribus.insertText(texto, 0, nombre)
         if estilo is not None:
-            scribus.selectText(0, len(texto) - 1 , nombre)
+            long_texto = scribus.getTextLength(nombre)
+            scribus.selectText(0, long_texto , nombre)
             scribus.setStyle(estilo, nombre)
 
     def imagen(self, posicion, dimension, fichero):
@@ -180,15 +186,15 @@ class Impresora(object):
                 scribus.applyMasterPage(Cocina.receta_A, page_num)
                 # Seleccionar cuadro para poema
                 # meterlo poema
-                page_num_str = str(page_num)
                 poema_num = page_num // 2
-                if poema_num < len(poemas):
+                if poema_num < len(Cocina.poemas):
                     espacio_receta = Espacio(Puntos.Q)
                     espacio_receta.cuadro_de_texto(
                         Puntos.O,
                         Dimension.A,
-                        poemas[poema_num]["contenido"],
-                        "cuadro_contenido_{}".format(page_num)
+                        Cocina.poemas[poema_num]["contenido"],
+                        "cuadro_contenido_{}".format(page_num),
+                        "parrafo_poema"
                     )
             else:
                 scribus.applyMasterPage(Cocina.receta_B, page_num)
