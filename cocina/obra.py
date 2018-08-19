@@ -7,9 +7,6 @@ class Cocina(object):
     autor = "Daniel Moreno Medina"
     info = ""
     descripcion = ""
-    num_recetas = 4
-    num_poemas = 9
-    num_paginas = (num_recetas + num_poemas) * 2
 
     # Master pages
     receta_A = "recetaDelante"
@@ -236,3 +233,7 @@ class Cocina(object):
             """
         }
     ]
+
+    num_recetas = len(recetas)
+    num_poemas = len(poemas)
+    num_paginas = (num_recetas + num_poemas) * 2

@@ -20,6 +20,7 @@ class Punto(object):
 
 class Formato(object):
     # Page formatting
+    INTERLINEADO_FIJO = 0
     SIN_MARGENES = (0, 0, 0, 0)
     A3 = Punto(*scribus.PAPER_A3)
     A4 = Punto(*scribus.PAPER_A4)
@@ -42,33 +43,38 @@ class Formato(object):
 
     @classmethod
     def crear_estilos(cls):
-        estilo_titulo = scribus.createCharStyle(
+        scribus.createCharStyle(
             name="estilo_titulo",
             font="Crimson Text Bold",
             features="bold",
             fontsize=18.0
         )
 
-        estilo_cuerpo = scribus.createCharStyle(
+        scribus.createCharStyle(
             name="estilo_cuerpo",
             font="Lato Regular",
-            fontsize=12.0
+            fontsize=14.0
         )
 
-        parrafo_titulo = scribus.createParagraphStyle(
+        scribus.createParagraphStyle(
             name="parrafo_titulo",
             alignment=scribus.ALIGN_LEFT,
             charstyle="estilo_titulo"
         )
 
-        parrafo_poema = scribus.createParagraphStyle(
+        scribus.createParagraphStyle(
             name="parrafo_poema",
             alignment=scribus.ALIGN_LEFT,
+            linespacingmode=Formato.INTERLINEADO_FIJO,
+            linespacing=22,
             charstyle="estilo_cuerpo"
         )
-        parrafo_receta = scribus.createParagraphStyle(
+
+        scribus.createParagraphStyle(
             name="parrafo_receta",
             alignment=scribus.ALIGN_BLOCK,
+            linespacingmode=Formato.INTERLINEADO_FIJO,
+            linespacing=22,
             charstyle="estilo_cuerpo"
         )
 
@@ -179,27 +185,82 @@ class Impresora(object):
         scribus.closeMasterPage()
 
     @classmethod
+    def rellenar_pasos_receta(cls, receta, page_num):
+        espacio_receta = Espacio(Puntos.Q)
+        espacio_receta.cuadro_de_texto(
+            Punto(Puntos.O.x, Puntos.O.y + 120),
+            Punto(Formato.A5.x, 30),
+            receta["titulo"],
+            "cuadro_titulo_{}".format(page_num),
+            "parrafo_titulo"
+        )
+        espacio_receta.cuadro_de_texto(
+            Punto(Puntos.O.x, Puntos.O.y + 50),
+            Dimension.A,
+            receta["contenido"],
+            "cuadro_contenido_{}".format(page_num),
+            "parrafo_receta"
+        )
+
+    @classmethod
+    def rellenar_ingredientes_receta(cls, receta, page_num):
+        espacio_receta = Espacio(Puntos.P)
+        espacio_receta.cuadro_de_texto(
+            Punto(Puntos.O.x, Puntos.O.y + 120),
+            Punto(Formato.A5.x, 30),
+            receta["titulo"] + "\n\nIngredientes",
+            "cuadro_titulo_{}".format(page_num),
+            "parrafo_titulo"
+        )
+
+        texto_ingredientes = ""
+        for ingrediente in receta["ingredientes"]:
+            texto_ingredientes += "{} {} de {}\n".format(*ingrediente)
+
+        espacio_receta.cuadro_de_texto(
+            Punto(Puntos.O.x, Puntos.O.y + 50),
+            Dimension.A,
+            texto_ingredientes,
+            "cuadro_contenido_{}".format(page_num),
+            "parrafo_receta"
+        )
+
+    @classmethod
+    def rellenar_poema(cls, poema, page_num):
+        espacio_receta = Espacio(Puntos.Q)
+        espacio_receta.cuadro_de_texto(
+            Punto(Puntos.O.x, Puntos.O.y + 120),
+            Punto(Formato.A5.x, 30),
+            poema["titulo"],
+            "cuadro_titulo_{}".format(page_num),
+            "parrafo_titulo"
+        )
+        espacio_receta.cuadro_de_texto(
+            Punto(Puntos.O.x, Puntos.O.y + 50),
+            Dimension.A,
+            poema["contenido"],
+            "cuadro_contenido_{}".format(page_num),
+            "parrafo_poema"
+        )
+
+    @classmethod
     def rellenar_documento(cls):
+        i_poema = iter(Cocina.poemas)
+        i_receta = iter(Cocina.recetas)
+        receta = None
         for page_num in range(1, Cocina.num_paginas + 1):
             scribus.gotoPage(page_num)
             if page_num % 2:
                 scribus.applyMasterPage(Cocina.receta_A, page_num)
-                # Seleccionar cuadro para poema
-                # meterlo poema
-                poema_num = page_num // 2
-                if poema_num < len(Cocina.poemas):
-                    espacio_receta = Espacio(Puntos.Q)
-                    espacio_receta.cuadro_de_texto(
-                        Puntos.O,
-                        Dimension.A,
-                        Cocina.poemas[poema_num]["contenido"],
-                        "cuadro_contenido_{}".format(page_num),
-                        "parrafo_poema"
-                    )
+                if page_num % 8 == 1:
+                    receta = i_receta.next()
+                    cls.rellenar_pasos_receta(receta, page_num)
+                else:
+                    cls.rellenar_poema(i_poema.next(), page_num)
             else:
                 scribus.applyMasterPage(Cocina.receta_B, page_num)
-                # Seleccionar cuadro contenido
-                # meter ingredientes si estamos en receta
+                if page_num % 8 == 2:
+                    cls.rellenar_ingredientes_receta(receta, page_num)
 
             # Seleccionar cuadro tecnicas
             # meter tecnica
