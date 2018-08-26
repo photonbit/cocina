@@ -191,12 +191,9 @@ class Cocina(object):
                 (1, "unidad", "huevo")
             ],
             "contenido": """
-            Si los huevos, o quien los cocine, no están muy frescos: moldes, no de papel, 
-            el horno a 180ºC, una cucharada de agua y un huevo por molde durante 11 minutos.
+            Si los huevos, o quien los cocine, no están muy frescos: moldes, no de papel, el horno a 180ºC, una cucharada de agua y un huevo por molde durante 11 minutos.
     
-            Para los días valientes: una olla grande con abundante agua a 80ºC,
-            huevos cascados sobre una espumadera o colador, depositados suavemente en el agua.
-            A los 4 minutos habrá que pescarlos con cuidado.
+            Para los días valientes: una olla grande con abundante agua a 80ºC, huevos cascados sobre una espumadera o colador, depositados suavemente en el agua. A los 4 minutos habrá que pescarlos con cuidado.
             """
         },
         {
@@ -235,31 +232,28 @@ class Cocina(object):
                 (150, "mililitros", "leche"),
                 (150, "mililitros", "agua")
             ],
-            "contenido": """
-            Saca la mantequilla de la nevera. Mezcla la harina, la levadura, el azúcar y por último 
-            la sal en un bol. Calienta el agua y la leche en un cazo a fuego lento. Sácalo del fuego 
-            cuando al introducir el dedo no sientas nada. En todas partes te dirán que eches 
-            el líquido poco a poco. Hazlo como te resulte más divertido. Sigue mezclando y amasando 
-            con las manos hasta que casi se pueda despegar fácilmente de los dedos. Añade la mantequilla 
-            y sigue amasando, golpeando y enrollando, en el mismo bol si no quieres manchar mucho. 
-            Cuando después de mucho estirar, doblar y apretar la masa sea homogénea y se pueda alargar 
-            sin que se rompa demasiado, ya está lista para reposar en el bol tapado con un trapo. 
-            Divide la masa en pedazos, seis o diez son un buenos números. Haz bolas y aplástalas después. 
-            Hazlos en la sartén ya bien caliente, pero bajando el fuego al ponerlos o en el horno 
-            a 180ºC durante unos minutos hasta que queden de color tostado por arriba, sin que se 
-            lleguen a quemar, dándoles la vuelta a mitad de cocción.
-            """
+            "contenido": ""
+            "Saca la mantequilla de la nevera. Mezcla la harina, la levadura, el azúcar y por último " 
+            "la sal en un bol. Calienta el agua y la leche en un cazo a fuego lento. Sácalo del fuego "
+            "cuando al introducir el dedo no sientas nada. En todas partes te dirán que eches "
+            "el líquido poco a poco. Hazlo como te resulte más divertido. Sigue mezclando y amasando " 
+            "con las manos hasta que casi se pueda despegar fácilmente de los dedos. Añade la mantequilla" 
+            "y sigue amasando, golpeando y enrollando, en el mismo bol si no quieres manchar mucho. "
+            "Cuando después de mucho estirar, doblar y apretar la masa sea homogénea y se pueda alargar " 
+            "sin que se rompa demasiado, ya está lista para reposar en el bol tapado con un trapo. "
+            "Divide la masa en pedazos, seis o diez son un buenos números. Haz bolas y aplástalas después. " 
+            "Hazlos en la sartén ya bien caliente, pero bajando el fuego al ponerlos o en el horno "
+            "a 180ºC durante unos minutos hasta que queden de color tostado por arriba, sin que se "
+            "lleguen a quemar, dándoles la vuelta a mitad de cocción."
         },
         {
             "titulo": "Huevos Benedict",
             "ingredientes": [
             ],
             "contenido": """
-            Pon unas tiras de bacon en el horno hasta que empiecen a estar secas y no puedas resistir 
-            el olor en la cocina. Si te gusta crujiente espera un poco más y te lo agradecerás.
+            Pon unas tiras de bacon en el horno hasta que empiecen a estar secas y no puedas resistir el olor en la cocina. Si te gusta crujiente espera un poco más y te lo agradecerás.
     
-            Abre un muffin y sobre una mitad coloca una loncha de bacon, un huevo pochado y riega con abundante 
-            salsa holandesa. Unas patatas fritas al lado completan una comida para celebrar.
+            Abre un muffin y sobre una mitad coloca una loncha de bacon, un huevo pochado y riega con abundante salsa holandesa. Unas patatas fritas al lado completan una comida para celebrar.
             """
         }
     ]
