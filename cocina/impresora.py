@@ -19,7 +19,6 @@ class Punto(object):
 
 
 class Formato(object):
-    # Page formatting
     INTERLINEADO_FIJO = 0
     SIN_MARGENES = (0, 0, 0, 0)
     A3 = Punto(*scribus.PAPER_A3)
@@ -90,6 +89,7 @@ class Dimension(object):
     A = Punto(Formato.X[2], Formato.Y[2])
     B = Punto(Formato.X[3], Formato.Y[1])
     C = Punto(Formato.X[1], Formato.Y[2])
+    D = Punto(Formato.Y[1], Formato.X[3])
 
 
 class Puntos(object):
@@ -97,6 +97,7 @@ class Puntos(object):
     P = Punto(Formato.X[0], Formato.Y[1])
     Q = Punto(Formato.X[1], Formato.Y[1])
     R = Punto(Formato.X[2], Formato.Y[1])
+    S = Punto(Formato.X[3], Formato.Y[0])
 
 
 class Espacio(object):
@@ -106,9 +107,9 @@ class Espacio(object):
         self.rotacion = rotacion
 
     def posicionar(self, nombre):
-        scribus.moveObject(self.origen.x, self.origen.y, nombre)
         if self.rotacion is not 0:
             scribus.rotateObject(self.rotacion, nombre)
+        scribus.moveObject(self.origen.x, self.origen.y, nombre)
 
     @classmethod
     def rectangulo(cls, posicion, dimension):
@@ -118,8 +119,11 @@ class Espacio(object):
     def linea(clscls, inicio, fin):
         scribus.createLine(inicio.x, inicio.y, fin.x, fin.y)
 
-    def cuadro_de_texto(self, posicion, dimension, texto, nombre, estilo = None):
-        p, d = Formato.marginar(posicion, dimension)
+    def cuadro_de_texto(self, posicion, dimension, texto, nombre, estilo = None, marginar=True):
+        if marginar:
+            p, d = Formato.marginar(posicion, dimension)
+        else:
+            p, d = posicion, dimension
         scribus.createText(p.x, p.y, d.x, d.y, nombre)
         self.posicionar(nombre)
         scribus.insertText(texto, 0, nombre)
@@ -132,6 +136,13 @@ class Espacio(object):
         marco_imagen = scribus.createImage(posicion.x, posicion.y, dimension.x, dimension.y)
         self.posicionar(marco_imagen)
         scribus.loadImage(fichero, marco_imagen)
+        scribus.setScaleImageToFrame(True, False, marco_imagen)
+        scaleX, scaleY = scribus.getImageScale(marco_imagen)
+        scribus.setScaleImageToFrame(False, False, marco_imagen)
+        scale = scaleY
+        if scaleX > scaleY:
+            scale = scaleX
+        scribus.setImageScale(scale, scale, marco_imagen)
 
 
 class Impresora(object):
@@ -197,7 +208,6 @@ class Impresora(object):
         Espacio.rectangulo(Puntos.O, Dimension.B)
         # Cuadro anotaciones
         Espacio.rectangulo(Puntos.P, Dimension.C)
-        Impresora.imagen_anotacion(Puntos.P)
         Impresora.renglones_para_anotar(Puntos.P)
         scribus.closeMasterPage()
 
@@ -211,7 +221,6 @@ class Impresora(object):
         Espacio.rectangulo(Puntos.O, Dimension.B)
         # Cuadro anotaciones
         Espacio.rectangulo(Puntos.R, Dimension.C)
-        Impresora.imagen_anotacion(Puntos.R)
         Impresora.renglones_para_anotar(Puntos.R)
         scribus.closeMasterPage()
 
@@ -275,6 +284,28 @@ class Impresora(object):
         )
 
     @classmethod
+    def rellenar_tecnica(cls, page_num):
+        if page_num % 2:
+            espacio_tecnica = Espacio(Puntos.S, -90)
+        else:
+            espacio_tecnica = Espacio(Puntos.P, 90)
+
+        texto = Cocina.tecnicas[0]["nombre"] + "\n\n\n"
+        for tecnica, nombre in Cocina.tecnicas[0]["compendio"].iteritems():
+            texto += nombre+"\n"
+            texto += tecnica+"\n\n"
+
+        espacio_tecnica.cuadro_de_texto(
+            Puntos.O,
+            Dimension.D,
+            texto,
+            "cuadro_tecnicas_{}".format(page_num),
+            "parrafo_receta",
+            False
+        )
+
+
+    @classmethod
     def rellenar_documento(cls):
         i_poema = iter(Cocina.poemas)
         i_receta = iter(Cocina.recetas)
@@ -283,6 +314,7 @@ class Impresora(object):
             scribus.gotoPage(page_num)
             if page_num % 2:
                 scribus.applyMasterPage(Cocina.receta_A, page_num)
+                Impresora.imagen_anotacion(Puntos.P)
                 if page_num % 8 == 1:
                     receta = i_receta.next()
                     cls.rellenar_pasos_receta(receta, page_num)
@@ -290,10 +322,8 @@ class Impresora(object):
                     cls.rellenar_poema(i_poema.next(), page_num)
             else:
                 scribus.applyMasterPage(Cocina.receta_B, page_num)
+                Impresora.imagen_anotacion(Puntos.R)
                 if page_num % 8 == 2:
                     cls.rellenar_ingredientes_receta(receta, page_num)
 
-            # Seleccionar cuadro tecnicas
-            # meter tecnica
-            # Seleccionar cuadro marcapaginas
-            # meter algo?
+            cls.rellenar_tecnica(page_num)
