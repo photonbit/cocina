@@ -1,5 +1,35 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
+import os
+import random
+
+class Tecnica(object):
+    def __init__(self, nombre, descripcion):
+        self.nombre = nombre
+        self.descripcion = descripcion
+
+class Coccion(Tecnica):
+    def __init__(self, nombre, descripcion):
+        super(Coccion, self).__init__(nombre, descripcion)
+
+class CorteVerdura(Tecnica):
+    def __init__(self, nombre, descripcion):
+        super(CorteVerdura, self).__init__(nombre, descripcion)
+
+class CorteCarne(Tecnica):
+    def __init__(self, nombre, descripcion,  grasa, entrevetado, textura, sabor, cocciones=None):
+        self.nombre = "El nombre del corte"
+        self.grasa = "Cantidad de grasa"
+        self.entrevetado = "Presentación de la grasa"
+        self.textura = "Cómo se comporta al tacto"
+        self.sabor = "Cómo se comporta al paladar"
+
+        if cocciones is None:
+            self.cocciones = []  # List[Coccion]
+        else:
+            self.cocciones = cocciones
+
+        super(CorteCarne, self).__init__(nombre, descripcion)
 
 
 class Cocina(object):
@@ -233,6 +263,59 @@ class Cocina(object):
             """
         }
     ]
+
+    tecnicas = [
+        {
+            "nombre": "preparaciones",
+            "compendio": {
+                "asar": "Calor indirecto y seco",
+                "freír": "Hundir en aceite o grasa hirviendo",
+                "sofreír": "Planchar a fuego lento en aceite",
+                "rehogar": "Sofreír rápidamente",
+                "planchar": "Poner en metal caliente",
+                "hornear": "Asar, al papillote (envuelto en aluminio), a la sal",
+                "confitar": "Introducir en líquido normalmente aceitoso a poca temperatura (60 grados)",
+                "macerar": "Líquido normalmente cítrico frío o golpes para ablandar, extraer sabores y líquidos",
+                "hervir": "Hundir en agua u otro líquido no aceitoso hirviendo",
+                "fermentar": "Permitir una podredumbre controlada",
+                "secar": "Eliminar la humedad",
+                "baño maría": "",
+                "escalfar": "",
+                "saltear": "",
+                "guisar": "Hasta que cubra. Los guisos van sofritos, suelen llevar agua o vino, pueden hacerse a olla abierta",
+                "estofar": "A fuego lento. Los estofados se cocinan en su jugo, a olla cerrada siempre, "
+                           "se puede añadir algo de vino, tomate o un poquito de algo más, pero no que cubra"
+            }
+        },
+        {
+            "nombre": "cortes",
+            "verdura": {
+                "juliana": "",
+                "dados": "",
+                "rodajas": "",
+                "finito": ""
+            },
+            "vaca": {
+                "entrecot": "",
+                "falda": ""
+            },
+            "cerdo": {
+                "lomo": "",
+                "carrilleras": ""
+            }
+        }
+    ]
+
+    imagenes = os.listdir(os.path.join(os.path.dirname(__file__), "..", "imagenes"))
+
+    @classmethod
+    def imagen_aleatoria(cls):
+        return os.path.join(os.path.dirname(__file__), "..", "imagenes", random.choice(cls.imagenes))
+
+
+    # Relación entre cortes y cocciones
+    # Todos los cortes de carne son buenos,
+    # solo hay que saber cocinarlos.
 
     num_recetas = len(recetas)
     num_poemas = len(poemas)

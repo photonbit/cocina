@@ -114,6 +114,10 @@ class Espacio(object):
     def rectangulo(cls, posicion, dimension):
         scribus.createRect(posicion.x, posicion.y, dimension.x, dimension.y)
 
+    @classmethod
+    def linea(clscls, inicio, fin):
+        scribus.createLine(inicio.x, inicio.y, fin.x, fin.y)
+
     def cuadro_de_texto(self, posicion, dimension, texto, nombre, estilo = None):
         p, d = Formato.marginar(posicion, dimension)
         scribus.createText(p.x, p.y, d.x, d.y, nombre)
@@ -125,9 +129,9 @@ class Espacio(object):
             scribus.setStyle(estilo, nombre)
 
     def imagen(self, posicion, dimension, fichero):
-        scribus.createImage(posicion.x, posicion.y, dimension.x, dimension.y)
-        self.posicionar()
-        scribus.loadImage(fichero)
+        marco_imagen = scribus.createImage(posicion.x, posicion.y, dimension.x, dimension.y)
+        self.posicionar(marco_imagen)
+        scribus.loadImage(fichero, marco_imagen)
 
 
 class Impresora(object):
@@ -160,6 +164,30 @@ class Impresora(object):
         scribus.setInfo(Cocina.autor, Cocina.info, Cocina.descripcion)
 
     @classmethod
+    def renglones_para_anotar(cls, base):
+
+        inicio = Punto(base.x, base.y + Dimension.C.y // 3)
+        margen_izqdo = Dimension.C.x / 6
+        margen_derecho = Dimension.C.x * 5 / 6
+
+        salto = (Dimension.C.y // 3) * 2 / 10
+
+        for i in range(1, 10):
+            Espacio.linea(
+                Punto(base.x + margen_izqdo, inicio.y + salto * i),
+                Punto(base.x + margen_derecho, inicio.y + salto * i)
+            )
+
+    @classmethod
+    def imagen_anotacion(cls, base):
+        inicio = Punto(Dimension.C.x / 6, 50)
+        tamanio = Punto(Dimension.C.x * 4 / 6, Dimension.C.y // 3 - 50)
+        espacio_imagen = Espacio(base)
+        espacio_imagen.imagen(inicio, tamanio, Cocina.imagen_aleatoria())
+
+
+
+    @classmethod
     def pagina_maestra_impares(cls):
         scribus.createMasterPage(Cocina.receta_A)
         scribus.editMasterPage(Cocina.receta_A)
@@ -169,6 +197,8 @@ class Impresora(object):
         Espacio.rectangulo(Puntos.O, Dimension.B)
         # Cuadro anotaciones
         Espacio.rectangulo(Puntos.P, Dimension.C)
+        Impresora.imagen_anotacion(Puntos.P)
+        Impresora.renglones_para_anotar(Puntos.P)
         scribus.closeMasterPage()
 
     @classmethod
@@ -181,7 +211,8 @@ class Impresora(object):
         Espacio.rectangulo(Puntos.O, Dimension.B)
         # Cuadro anotaciones
         Espacio.rectangulo(Puntos.R, Dimension.C)
-
+        Impresora.imagen_anotacion(Puntos.R)
+        Impresora.renglones_para_anotar(Puntos.R)
         scribus.closeMasterPage()
 
     @classmethod
