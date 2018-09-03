@@ -53,7 +53,7 @@ class Formato(object):
         scribus.createCharStyle(
             name="estilo_cuerpo_poema",
             font="Lato Regular",
-            fontsize=40.0
+            fontsize=35.0
         )
 
         scribus.createCharStyle(
@@ -71,14 +71,16 @@ class Formato(object):
         scribus.createParagraphStyle(
             name="parrafo_poema",
             alignment=scribus.ALIGN_LEFT,
-            linespacingmode=Formato.INTERLINEADO_AUTOMATICO,
+            linespacingmode=Formato.INTERLINEADO_FIJO,
+            linespacing=70.0,
             charstyle="estilo_cuerpo_poema"
         )
 
         scribus.createParagraphStyle(
             name="parrafo_receta",
             alignment=scribus.ALIGN_BLOCK,
-            linespacingmode=Formato.INTERLINEADO_AUTOMATICO,
+            linespacingmode=Formato.INTERLINEADO_FIJO,
+            linespacing=60,
             charstyle="estilo_cuerpo_prosa"
         )
 
@@ -230,15 +232,21 @@ class Impresora(object):
         scribus.closeMasterPage()
 
     @classmethod
+    def rellena_titulo(cls, titulo, espacio, origen, page_num):
+        espacio.cuadro_de_texto(
+            Punto(origen.x, origen.y + 100),
+            Punto(Formato.A5.x, 50),
+            titulo,
+            "cuadro_titulo_{}".format(page_num),
+            "parrafo_titulo",
+            True
+        )
+
+
+    @classmethod
     def rellenar_pasos_receta(cls, receta, page_num):
         espacio_receta = Espacio(Puntos.Q)
-        espacio_receta.cuadro_de_texto(
-            Punto(Puntos.O.x + 50, Puntos.O.y + 100),
-            Punto(Formato.A5.x - 70, 50),
-            receta["titulo"],
-            "cuadro_titulo_{}".format(page_num),
-            "parrafo_titulo"
-        )
+        Impresora.rellena_titulo(receta["titulo"], espacio_receta, Puntos.O, page_num)
         espacio_receta.cuadro_de_texto(
             Punto(Puntos.O.x, Puntos.O.y + 50),
             Dimension.A,
@@ -250,18 +258,14 @@ class Impresora(object):
     @classmethod
     def rellenar_ingredientes_receta(cls, receta, page_num):
         espacio_receta = Espacio(Puntos.P)
-        espacio_receta.cuadro_de_texto(
-            Punto(Puntos.O.x + 50, Puntos.O.y + 100),
-            Punto(Formato.A5.x - 70, 50),
-            "Ingredientes",
-            "cuadro_titulo_{}".format(page_num),
-            "parrafo_titulo",
-            False
-        )
+        Impresora.rellena_titulo("Ingredientes", espacio_receta, Puntos.O, page_num)
 
         texto_ingredientes = ""
         for ingrediente in receta["ingredientes"]:
-            texto_ingredientes += "{} {} de {}\n".format(*ingrediente)
+            if ingrediente[1] == "unidad":
+                texto_ingredientes += "{} {}\n".format(ingrediente[0], ingrediente[2])
+            else:
+                texto_ingredientes += "{} {} de {}\n".format(*ingrediente)
 
         espacio_receta.cuadro_de_texto(
             Punto(Puntos.O.x, Puntos.O.y + 50),
@@ -273,16 +277,10 @@ class Impresora(object):
 
     @classmethod
     def rellenar_poema(cls, poema, page_num):
-        espacio_receta = Espacio(Puntos.Q)
-        espacio_receta.cuadro_de_texto(
-            Punto(Puntos.O.x + 50, Puntos.O.y + 100),
-            Punto(Formato.A5.x - 70, 50),
-            poema["titulo"],
-            "cuadro_titulo_{}".format(page_num),
-            "parrafo_titulo",
-            False
-        )
-        espacio_receta.cuadro_de_texto(
+        espacio_poema = Espacio(Puntos.Q)
+        Impresora.rellena_titulo(poema["titulo"], espacio_poema, Puntos.O, page_num)
+
+        espacio_poema.cuadro_de_texto(
             Punto(Puntos.O.x, Puntos.O.y + 50),
             Dimension.A,
             poema["contenido"],
