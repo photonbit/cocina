@@ -6,9 +6,16 @@ import sys
 try:
     import scribus
 except ImportError, err:
-    print "This Python script is written for the Scribus scripting interface."
-    print "It can only be run from within Scribus."
+    print "Esto está pensado para ser ejecutado desde Scribus."
+    print "Sin Scribus no hay escrito."
     sys.exit(1)
+
+try:
+    import numpy
+except ImportError, err:
+    print "Hace falta que las cosas estén instaladas, si no no jugamos."
+except Exception, e:
+    print "Scribus es travieso y no limpia las cosas, así que esto ya está importado."
 
 from obra import Cocina
 
@@ -16,6 +23,11 @@ class Punto(object):
     def __init__(self, x, y):
         self.x = x
         self.y = y
+
+    def rotar(self, matriz):
+        v = [self.x, self.y]
+        vprima = numpy.dot(matriz, v)
+        return Punto(*vprima)
 
 
 class Formato(object):
@@ -106,17 +118,45 @@ class Puntos(object):
     R = Punto(Formato.X[2], Formato.Y[1])
     S = Punto(Formato.X[3], Formato.Y[0])
 
+#   Puntos:
+#
+#     O------------S   O------------S
+#     |            |   |            |
+#     |            |   |            |
+#     P---Q--------|   P--------R---|
+#     |   |        |   |        |   |
+#     |   |        |   |        |   |
+#     |   |        |   |        |   |
+#     |   |        |   |        |   |
+#     |   |        |   |        |   |
+#     |   |        |   |        |   |
+#     |___|________|   |________|___|
+#
+
 
 class Espacio(object):
+
+    def _genera_matriz(self):
+        if not self.rotacion:
+            return None
+
+        theta = numpy.radians(self.rotacion)
+        coseno = numpy.cos(theta)
+        seno = numpy.sin(theta)
+        return numpy.array(((coseno, -seno), (seno, coseno)))
 
     def __init__(self, origen, rotacion = 0):
         self.origen = origen
         self.rotacion = rotacion
+        self.matriz_rotacion = self._genera_matriz()
 
     def posicionar(self, nombre):
-        if self.rotacion is not 0:
+        if self.rotacion is 0:
+            punto = self.origen
+        else:
             scribus.rotateObject(self.rotacion, nombre)
-        scribus.moveObject(self.origen.x, self.origen.y, nombre)
+            punto = self.origen.rotar(self.matriz_rotacion)
+        scribus.moveObject(punto.x, punto.y, nombre)
 
     @classmethod
     def rectangulo(cls, posicion, dimension):
@@ -147,7 +187,7 @@ class Espacio(object):
         scaleX, scaleY = scribus.getImageScale(marco_imagen)
         scribus.setScaleImageToFrame(False, False, marco_imagen)
         scale = scaleY
-        if scaleX > scaleY:
+        if scaleY > scaleX:
             scale = scaleX
         scribus.setImageScale(scale, scale, marco_imagen)
 
@@ -156,11 +196,11 @@ class Impresora(object):
     @classmethod
     def iniciar_portada(cls):
         portada = scribus.newDocument(
-            scribus.PAPER_A3,  # size
-            Formato.SIN_MARGENES,  # margins
-            scribus.LANDSCAPE,  # orientation
+            scribus.PAPER_A3,
+            Formato.SIN_MARGENES,
+            scribus.LANDSCAPE,
             1,  # firstPageNumber
-            scribus.UNIT_MILLIMETERS,  # unit
+            scribus.UNIT_MILLIMETERS,
             scribus.PAGE_1,  # pagesType
             0,  # firstPageOrder
             1  # numPage
@@ -170,11 +210,11 @@ class Impresora(object):
     @classmethod
     def iniciar_documento(cls):
         obra = scribus.newDocument(
-            scribus.PAPER_A4,  # size
-            Formato.SIN_MARGENES,  # margins
-            scribus.PORTRAIT,  # orientation
+            scribus.PAPER_A4,
+            Formato.SIN_MARGENES,
+            scribus.PORTRAIT,
             1,  # firstPageNumber
-            scribus.UNIT_MILLIMETERS,  # unit
+            scribus.UNIT_MILLIMETERS,
             scribus.PAGE_1,  # pagesType
             0,  # firstPageOrder
             Cocina.num_paginas  # numPage
