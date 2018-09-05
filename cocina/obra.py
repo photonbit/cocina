@@ -62,12 +62,11 @@ entienda lo no hablado.
             "contenido":  ""
 """
 No es perdido
-el tiempo
-si deja
+el tiempo si está
 el corazón tranquilo
 y la panza llena.
 
-Del contento y color
+Del resposo y color
 de una cuidada
 disposición
 nace sin dolor
@@ -98,7 +97,7 @@ llegarás sin duda
 a tu destino.
 
 Mirar hacia delante
-a cada paso
+y a cada paso decidir
 hará tuyo el camino.
 
 Vivir así,
@@ -110,18 +109,16 @@ solo difuminar y crear.
             "titulo": "Amasa",
             "contenido": ""
 """
-Carne, masa, materia.
-
-De la acción de las manos,      
-los ingredientes transmutan        
-y nos traen algo nuevo.
+De la acción de las manos
+harina y agua marchan          
+para traernos algo nuevo.
 
 La masa ya conoce        
 qué forma tendrá el pan.
 
 Nuestra fuerza,
 nuestros movimientos
-únicamente hacen la masa
+únicamente la hacen
 despertar.
 """
         },
@@ -180,11 +177,9 @@ siempre será menos.
             "titulo": "Vive",
             "contenido":  ""
 """
-Sin olvidarte,
-sin ocuparlo todo.
-Una vez masticada
-la comida
-pensar en la siguiente.
+Terminada la comida
+podemos pensar
+y pensar en la siguiente.
 
 Cuidando que llegue
 cada momento
@@ -255,10 +250,10 @@ Ya está listo.
 "y sigue amasando, golpeando y enrollando, en el mismo bol si no quieres manchar mucho. "
 "Cuando después de mucho estirar, doblar y apretar la masa sea homogénea y se pueda alargar " 
 "sin que se rompa demasiado, ya está lista para reposar en el bol tapado con un trapo. "
-"Divide la masa en pedazos, seis o diez son un buenos números. Haz bolas y aplástalas después. " 
-"Hazlos en la sartén ya bien caliente, pero bajando el fuego al ponerlos o en el horno "
-"a 180ºC durante unos minutos hasta que queden de color tostado por arriba, sin que se "
-"lleguen a quemar, dándoles la vuelta a mitad de cocción."
+"Divide la masa en pedazos, seis o diez son buenos números. Forma bolas y aplástalas después. " 
+"Cuécelos por las dos caras en una sartén ya bien caliente, pero bajando el fuego al ponerlos. "
+"También se pueden hacer en el horno a 180ºC durante unos minutos hasta que queden de color "
+"tostado por arriba, sin que se lleguen a quemar, dándoles la vuelta a mitad de cocción."
         },
         {
             "titulo": "Huevos Benedict",
@@ -277,6 +272,7 @@ Abre un muffin y sobre una mitad coloca una loncha de bacon, un huevo pochado y 
         {
             "nombre": "preparaciones",
             "compendio": {
+                "cocer": "El comodín que puede ser cualquiera de las demás, aunque normalmente pensemos únicamente en hervir",
                 "asar": "Calor indirecto y seco",
                 "freír": "Hundir en aceite o grasa hirviendo",
                 "sofreír": "Planchar a fuego lento en aceite",
