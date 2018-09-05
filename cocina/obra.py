@@ -176,7 +176,7 @@ siempre será menos.
         {
             "titulo": "Vive",
             "contenido":  ""
-"""
+"""(
 Terminada la comida
 podemos pensar
 y pensar en la siguiente.

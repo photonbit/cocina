@@ -26,7 +26,7 @@ class Punto(object):
 
     def rotar(self, matriz):
         v = [self.x, self.y]
-        vprima = numpy.dot(matriz, v)
+        vprima = numpy.dot(v, matriz)
         return Punto(*vprima)
 
 
@@ -150,12 +150,11 @@ class Espacio(object):
         self.rotacion = rotacion
         self.matriz_rotacion = self._genera_matriz()
 
-    def posicionar(self, nombre):
-        if self.rotacion is 0:
-            punto = self.origen
-        else:
+    def posicionar(self, nombre, punto):
+        if self.rotacion is not 0:
             scribus.rotateObject(self.rotacion, nombre)
-            punto = self.origen.rotar(self.matriz_rotacion)
+            punto = punto.rotar(self.matriz_rotacion)
+        punto = Punto(punto.x + self.origen.x, punto.y + self.origen.y)
         scribus.moveObject(punto.x, punto.y, nombre)
 
     @classmethod
@@ -171,8 +170,8 @@ class Espacio(object):
             p, d = Formato.marginar(posicion, dimension)
         else:
             p, d = posicion, dimension
-        scribus.createText(p.x, p.y, d.x, d.y, nombre)
-        self.posicionar(nombre)
+        scribus.createText(0, 0, d.x, d.y, nombre)
+        self.posicionar(nombre, p)
         scribus.insertText(texto, 0, nombre)
         if estilo is not None:
             long_texto = scribus.getTextLength(nombre)
@@ -180,8 +179,8 @@ class Espacio(object):
             scribus.setStyle(estilo, nombre)
 
     def imagen(self, posicion, dimension, fichero):
-        marco_imagen = scribus.createImage(posicion.x, posicion.y, dimension.x, dimension.y)
-        self.posicionar(marco_imagen)
+        marco_imagen = scribus.createImage(0, 0, dimension.x, dimension.y)
+        self.posicionar(marco_imagen, posicion)
         scribus.loadImage(fichero, marco_imagen)
         scribus.setScaleImageToFrame(True, False, marco_imagen)
         scaleX, scaleY = scribus.getImageScale(marco_imagen)
@@ -346,7 +345,7 @@ class Impresora(object):
             texto,
             "cuadro_tecnicas_{}".format(page_num),
             "parrafo_receta",
-            False
+            True
         )
 
 
