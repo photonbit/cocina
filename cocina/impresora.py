@@ -301,10 +301,13 @@ class Impresora(object):
 
         texto_ingredientes = ""
         for ingrediente in receta["ingredientes"]:
-            if ingrediente[1] == "unidad":
-                texto_ingredientes += "{} {}\n".format(ingrediente[0], ingrediente[2])
+            cantidad, unidad, nombre = ingrediente
+            if unidad == "unidad":
+                texto_ingredientes += "{} {}\n".format(cantidad, nombre)
             else:
-                texto_ingredientes += "{} {} de {}\n".format(*ingrediente)
+                if not isinstance(cantidad, int):
+                    cantidad = "{}/{}".format(*cantidad.as_integer_ratio())
+                texto_ingredientes += "{} {} {}\n".format(cantidad, unidad, nombre)
 
         espacio_receta.cuadro_de_texto(
             Punto(Puntos.O.x, Puntos.O.y + 50),
@@ -345,7 +348,7 @@ class Impresora(object):
             texto,
             "cuadro_tecnicas_{}".format(page_num),
             "parrafo_receta",
-            True
+            False
         )
 
 
