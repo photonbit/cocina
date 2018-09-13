@@ -10,12 +10,7 @@ except ImportError, err:
     print "Sin Scribus no hay escrito."
     sys.exit(1)
 
-try:
-    import numpy
-except ImportError, err:
-    print "Hace falta que las cosas estén instaladas, si no no jugamos."
-except Exception, e:
-    print "Scribus es travieso y no limpia las cosas, así que esto ya está importado."
+import math
 
 from obra import Cocina
 
@@ -25,9 +20,10 @@ class Punto(object):
         self.y = y
 
     def rotar(self, matriz):
-        v = [self.x, self.y]
-        vprima = numpy.dot(v, matriz)
-        return Punto(*vprima)
+        return Punto(
+            self.x*matriz[0].x + self.y*matriz[0].y,
+            self.x*matriz[1].x + self.y*matriz[1].y
+        )
 
 
 class Formato(object):
@@ -140,10 +136,10 @@ class Espacio(object):
         if not self.rotacion:
             return None
 
-        theta = numpy.radians(self.rotacion)
-        coseno = numpy.cos(theta)
-        seno = numpy.sin(theta)
-        return numpy.array(((coseno, -seno), (seno, coseno)))
+        theta = math.radians(self.rotacion)
+        coseno = math.cos(theta)
+        seno = math.sin(theta)
+        return [Punto(coseno, -seno), Punto(seno, coseno)]
 
     def __init__(self, origen, rotacion = 0):
         self.origen = origen
@@ -307,7 +303,7 @@ class Impresora(object):
             else:
                 if not isinstance(cantidad, int):
                     cantidad = "{}/{}".format(*cantidad.as_integer_ratio())
-                texto_ingredientes += "{} {} {}\n".format(cantidad, unidad, nombre)
+                texto_ingredientes += "{} {} de {}\n".format(cantidad, unidad, nombre)
 
         espacio_receta.cuadro_de_texto(
             Punto(Puntos.O.x, Puntos.O.y + 50),
