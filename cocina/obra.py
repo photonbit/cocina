@@ -91,7 +91,7 @@ la respuesta aparece.
         {
             "titulo": "Inventa",
             "contenido": ""
-""""
+"""
 De seguir la receta
 llegarás sin duda
 a tu destino.
@@ -145,7 +145,7 @@ incluso sin nosotros,
         {
             "titulo": "Disfruta",
             "contenido": ""
-""""
+"""
 Un guiso sin deleite
 es mero instrumento.
 
@@ -176,7 +176,7 @@ siempre será menos.
         {
             "titulo": "Vive",
             "contenido":  ""
-"""(
+"""
 Terminada la comida
 podemos pensar
 y pensar en la siguiente.
