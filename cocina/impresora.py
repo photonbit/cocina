@@ -14,6 +14,7 @@ import math
 
 from obra import Cocina
 
+
 class Punto(object):
     def __init__(self, x, y):
         self.x = x
@@ -21,15 +22,21 @@ class Punto(object):
 
     def rotar(self, matriz):
         return Punto(
-            self.x*matriz[0].x + self.y*matriz[0].y,
-            self.x*matriz[1].x + self.y*matriz[1].y
+            self.x * matriz[0].x + self.y * matriz[0].y,
+            self.x * matriz[1].x + self.y * matriz[1].y
         )
 
 
 class Formato(object):
     INTERLINEADO_FIJO = 0
     INTERLINEADO_AUTOMATICO = 1
+
     SIN_MARGENES = (0, 0, 0, 0)
+    MARGENES_5_7_ANCHO = 5.0 / 7
+    MARGENES_2_3_DIAGONAL = 2.0 / 3
+    MARGENES_3_4_DIAGONAL = 3.0 / 4
+    MARGENES_ISO = 1.0
+
     A3 = Punto(*scribus.PAPER_A3)
     A4 = Punto(*scribus.PAPER_A4)
     A5 = Punto(*scribus.PAPER_A5)
@@ -93,11 +100,24 @@ class Formato(object):
         )
 
     @classmethod
-    def marginar(cls, punto, dimension):
-        p = Punto(punto.x + dimension.x/5, punto.y + dimension.y/6)
-        d = Punto(dimension.x - 2*dimension.x/5, dimension.y - 2*dimension.y/6)
+    def marginar(cls, punto, dimension, norma=MARGENES_5_7_ANCHO, traslado_x=0.5, traslado_y=0.5):
+        alpha = math.atan2(dimension.y, dimension.x)
 
-        return p, d
+        if norma == Formato.MARGENES_5_7_ANCHO or norma == Formato.MARGENES_ISO:
+            nuevo_ancho = dimension.x * norma
+            nueva_hipo = nuevo_ancho / math.cos(alpha)
+        elif norma == Formato.MARGENES_2_3_DIAGONAL or norma == Formato.MARGENES_3_4_DIAGONAL:
+            hipo = math.hypot(dimension.x, dimension.y)
+            nueva_hipo = hipo * norma
+        else:
+            raise Exception("Pero qué formato de margen es ese")
+
+        nueva_dimension = Punto(math.cos(alpha) * nueva_hipo, math.sin(alpha) * nueva_hipo)
+        margenes = Punto(dimension.x - nueva_dimension.x, dimension.y - nueva_dimension.y)
+
+        p = Punto(punto.x + margenes.x * traslado_x, punto.y + margenes.y * traslado_y)
+
+        return p, nueva_dimension
 
 
 class Dimension(object):
@@ -113,6 +133,7 @@ class Puntos(object):
     Q = Punto(Formato.X[1], Formato.Y[1])
     R = Punto(Formato.X[2], Formato.Y[1])
     S = Punto(Formato.X[3], Formato.Y[0])
+
 
 #   Puntos:
 #
@@ -141,7 +162,7 @@ class Espacio(object):
         seno = math.sin(theta)
         return [Punto(coseno, -seno), Punto(seno, coseno)]
 
-    def __init__(self, origen, rotacion = 0):
+    def __init__(self, origen, rotacion=0):
         self.origen = origen
         self.rotacion = rotacion
         self.matriz_rotacion = self._genera_matriz()
@@ -161,7 +182,7 @@ class Espacio(object):
     def linea(clscls, inicio, fin):
         scribus.createLine(inicio.x, inicio.y, fin.x, fin.y)
 
-    def cuadro_de_texto(self, posicion, dimension, texto, nombre, estilo = None, marginar=True):
+    def cuadro_de_texto(self, posicion, dimension, texto, nombre, estilo=None, marginar=True):
         if marginar:
             p, d = Formato.marginar(posicion, dimension)
         else:
@@ -171,7 +192,7 @@ class Espacio(object):
         scribus.insertText(texto, 0, nombre)
         if estilo is not None:
             long_texto = scribus.getTextLength(nombre)
-            scribus.selectText(0, long_texto , nombre)
+            scribus.selectText(0, long_texto, nombre)
             scribus.setStyle(estilo, nombre)
 
     def imagen(self, posicion, dimension, fichero):
@@ -238,8 +259,6 @@ class Impresora(object):
         espacio_imagen = Espacio(base)
         espacio_imagen.imagen(inicio, tamanio, Cocina.imagen_aleatoria())
 
-
-
     @classmethod
     def pagina_maestra_impares(cls):
         scribus.createMasterPage(Cocina.receta_A)
@@ -276,7 +295,6 @@ class Impresora(object):
             "parrafo_titulo",
             True
         )
-
 
     @classmethod
     def rellenar_pasos_receta(cls, receta, page_num):
@@ -335,8 +353,8 @@ class Impresora(object):
 
         texto = Cocina.tecnicas[0]["nombre"] + "\n\n\n"
         for tecnica, nombre in Cocina.tecnicas[0]["compendio"].iteritems():
-            texto += nombre+"\n"
-            texto += tecnica+"\n\n"
+            texto += nombre + "\n"
+            texto += tecnica + "\n\n"
 
         espacio_tecnica.cuadro_de_texto(
             Puntos.O,
@@ -346,7 +364,6 @@ class Impresora(object):
             "parrafo_receta",
             False
         )
-
 
     @classmethod
     def rellenar_documento(cls):
