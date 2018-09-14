@@ -21,10 +21,9 @@ class Punto(object):
         self.y = y
 
     def rotar(self, matriz):
-        return Punto(
-            self.x * matriz[0].x + self.y * matriz[0].y,
-            self.x * matriz[1].x + self.y * matriz[1].y
-        )
+        a = self.x * matriz[0].x + self.y * matriz[0].y
+        b = self.x * matriz[1].x + self.y * matriz[1].y
+        return Punto(a, b)
 
 
 class Formato(object):
@@ -104,9 +103,11 @@ class Formato(object):
         alpha = math.atan2(dimension.y, dimension.x)
 
         if norma == Formato.MARGENES_5_7_ANCHO or norma == Formato.MARGENES_ISO:
+            # Conocemos la relación del cateto opuesto
             nuevo_ancho = dimension.x * norma
             nueva_hipo = nuevo_ancho / math.cos(alpha)
         elif norma == Formato.MARGENES_2_3_DIAGONAL or norma == Formato.MARGENES_3_4_DIAGONAL:
+            # Conocemos la relación de la hipotenusa
             hipo = math.hypot(dimension.x, dimension.y)
             nueva_hipo = hipo * norma
         else:
@@ -160,7 +161,7 @@ class Espacio(object):
         theta = math.radians(self.rotacion)
         coseno = math.cos(theta)
         seno = math.sin(theta)
-        return [Punto(coseno, -seno), Punto(seno, coseno)]
+        return [Punto(coseno, seno), Punto( -seno, coseno)]
 
     def __init__(self, origen, rotacion=0):
         self.origen = origen
@@ -362,7 +363,7 @@ class Impresora(object):
             texto,
             "cuadro_tecnicas_{}".format(page_num),
             "parrafo_receta",
-            False
+            True
         )
 
     @classmethod
