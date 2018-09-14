@@ -248,10 +248,12 @@ Ya está listo.
 "el líquido poco a poco. Hazlo como te resulte más divertido. Sigue mezclando y amasando " 
 "con las manos hasta que casi se pueda despegar fácilmente de los dedos. Añade la mantequilla" 
 "y sigue amasando, golpeando y enrollando, en el mismo bol si no quieres manchar mucho. "
+"\n\n"
 "Cuando después de mucho estirar, doblar y apretar la masa sea homogénea y se pueda alargar " 
 "sin que se rompa demasiado, ya está lista para reposar en el bol tapado con un trapo. "
 "Divide la masa en pedazos, seis o diez son buenos números. Forma bolas y aplástalas después. " 
 "Cuécelos por las dos caras en una sartén ya bien caliente, pero bajando el fuego al ponerlos. "
+"\n\n"
 "También se pueden hacer en el horno a 180ºC durante unos minutos hasta que queden de color "
 "tostado por arriba, sin que se lleguen a quemar, dándoles la vuelta a mitad de cocción."
         },

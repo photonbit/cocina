@@ -184,8 +184,13 @@ class Espacio(object):
         scribus.createLine(inicio.x, inicio.y, fin.x, fin.y)
 
     def cuadro_de_texto(self, posicion, dimension, texto, nombre, estilo=None, marginar=True):
+        # Seleccionar tipo de margen según estilo
+        if estilo == "parrafo_receta":
+            norma_margen = Formato.MARGENES_3_4_DIAGONAL
+        else:
+            norma_margen = Formato.MARGENES_5_7_ANCHO
         if marginar:
-            p, d = Formato.marginar(posicion, dimension)
+            p, d = Formato.marginar(posicion, dimension, norma_margen)
         else:
             p, d = posicion, dimension
         scribus.createText(0, 0, d.x, d.y, nombre)
@@ -289,8 +294,8 @@ class Impresora(object):
     @classmethod
     def rellena_titulo(cls, titulo, espacio, origen, page_num):
         espacio.cuadro_de_texto(
-            Punto(origen.x, origen.y + 100),
-            Punto(Formato.A5.x, 50),
+            Punto(origen.x, origen.y + 70),
+            Punto(Formato.A5.x, 45),
             titulo,
             "cuadro_titulo_{}".format(page_num),
             "parrafo_titulo",
