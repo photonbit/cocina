@@ -205,13 +205,7 @@ class Espacio(object):
         marco_imagen = scribus.createImage(0, 0, dimension.x, dimension.y)
         self.posicionar(marco_imagen, posicion)
         scribus.loadImage(fichero, marco_imagen)
-        scribus.setScaleImageToFrame(True, False, marco_imagen)
-        scaleX, scaleY = scribus.getImageScale(marco_imagen)
-        scribus.setScaleImageToFrame(False, False, marco_imagen)
-        scale = scaleY
-        if scaleY > scaleX:
-            scale = scaleX
-        scribus.setImageScale(scale, scale, marco_imagen)
+        scribus.setScaleImageToFrame(True, True, marco_imagen)
 
 
 class Impresora(object):
