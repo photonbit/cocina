@@ -357,10 +357,13 @@ class Impresora(object):
         else:
             espacio_tecnica = Espacio(Puntos.P, 90)
 
-        texto = Cocina.tecnicas[0]["nombre"] + "\n\n\n"
-        for tecnica, nombre in Cocina.tecnicas[0]["compendio"].iteritems():
-            texto += nombre + "\n"
-            texto += tecnica + "\n\n"
+        if page_num == 1:
+            texto = Cocina.tecnicas[0]["nombre"] + "\n\n\n"
+            for nombre, tecnica in Cocina.tecnicas[0]["compendio"].iteritems():
+                texto += nombre + "\n"
+                texto += tecnica + "\n\n"
+        else:
+            texto = ""
 
         espacio_tecnica.cuadro_de_texto(
             Puntos.O,
@@ -370,6 +373,8 @@ class Impresora(object):
             "parrafo_receta",
             True
         )
+        if page_num > 1:
+            scribus.linkTextFrames("cuadro_tecnicas_{}".format(page_num-1), "cuadro_tecnicas_{}".format(page_num))
 
     @classmethod
     def rellenar_documento(cls):
