@@ -13,6 +13,13 @@ except ImportError, err:
 from cocina.impresora import Impresora, Formato
 
 def main(argv):
+    lento = scribus.messageBox('Poco a poco', '¿Quieres cocinar a fuego lento?',
+                        scribus.ICON_WARNING, scribus.BUTTON_YES,
+                                scribus.BUTTON_NO)
+    if lento == scribus.BUTTON_YES:
+        Impresora.cocinar_lento = True
+    else:
+        Impresora.cocinar_lento = False
     Impresora.iniciar_portada()
     Impresora.iniciar_documento()
     Impresora.pagina_maestra_impares()
@@ -24,7 +31,6 @@ def main(argv):
 def envoltorio(argv):
     try:
         scribus.statusMessage("Calentando los fogones...")
-        scribus.progressReset()
         main(argv)
     finally:
         if scribus.haveDoc():

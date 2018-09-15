@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import time
 
 try:
     import scribus
@@ -209,8 +210,22 @@ class Espacio(object):
 
 
 class Impresora(object):
+    cocinar_lento = True
+
+    @classmethod
+    def tick(cls, page=None):
+        if Impresora.cocinar_lento:
+            scribus.redrawAll()
+            time.sleep(1)
+        if page is not None:
+            scribus.gotoPage(page)
+            if page > 1:
+                scribus.scrollDocument(0, 1207)  # Depende del tamaño de la ventana :(
+
+
     @classmethod
     def iniciar_portada(cls):
+        scribus.statusMessage("Generando documento de portada")
         portada = scribus.newDocument(
             scribus.PAPER_A3,
             Formato.SIN_MARGENES,
@@ -225,6 +240,7 @@ class Impresora(object):
 
     @classmethod
     def iniciar_documento(cls):
+        scribus.statusMessage("Generando documento para la colección")
         obra = scribus.newDocument(
             scribus.PAPER_A4,
             Formato.SIN_MARGENES,
@@ -236,10 +252,12 @@ class Impresora(object):
             Cocina.num_paginas  # numPage
         )
         scribus.setInfo(Cocina.autor, Cocina.info, Cocina.descripcion)
+        scribus.zoomDocument(-100)
+        scribus.setRedraw(True)
 
     @classmethod
     def renglones_para_anotar(cls, base):
-
+        scribus.statusMessage("Pintando renglones para anotar")
         inicio = Punto(base.x, base.y + Dimension.C.y // 3)
         margen_izqdo = Dimension.C.x / 6
         margen_derecho = Dimension.C.x * 5 / 6
@@ -254,6 +272,7 @@ class Impresora(object):
 
     @classmethod
     def imagen_anotacion(cls, base):
+        scribus.statusMessage("Colocando imagen")
         inicio = Punto(Dimension.C.x / 6, 50)
         tamanio = Punto(Dimension.C.x * 4 / 6, Dimension.C.y // 3 - 50)
         espacio_imagen = Espacio(base)
@@ -298,6 +317,7 @@ class Impresora(object):
 
     @classmethod
     def rellenar_pasos_receta(cls, receta, page_num):
+        scribus.statusMessage("Rellenando pasos de receta")
         espacio_receta = Espacio(Puntos.Q)
         Impresora.rellena_titulo(receta["titulo"], espacio_receta, Puntos.O, page_num)
         espacio_receta.cuadro_de_texto(
@@ -310,6 +330,7 @@ class Impresora(object):
 
     @classmethod
     def rellenar_ingredientes_receta(cls, receta, page_num):
+        scribus.statusMessage("Rellenando ingredientes de receta")
         espacio_receta = Espacio(Puntos.P)
         Impresora.rellena_titulo("Ingredientes", espacio_receta, Puntos.O, page_num)
 
@@ -333,6 +354,7 @@ class Impresora(object):
 
     @classmethod
     def rellenar_poema(cls, poema, page_num):
+        scribus.statusMessage("Rellenando poema")
         espacio_poema = Espacio(Puntos.Q)
         Impresora.rellena_titulo(poema["titulo"], espacio_poema, Puntos.O, page_num)
 
@@ -346,6 +368,7 @@ class Impresora(object):
 
     @classmethod
     def rellenar_tecnica(cls, page_num):
+        scribus.statusMessage("Rellenando cuadro de técnicas")
         if page_num % 2:
             espacio_tecnica = Espacio(Puntos.S, -90)
         else:
@@ -376,7 +399,7 @@ class Impresora(object):
         i_receta = iter(Cocina.recetas)
         receta = None
         for page_num in range(1, Cocina.num_paginas + 1):
-            scribus.gotoPage(page_num)
+            Impresora.tick(page_num)
             if page_num % 2:
                 scribus.applyMasterPage(Cocina.receta_A, page_num)
                 Impresora.imagen_anotacion(Puntos.P)
@@ -390,5 +413,6 @@ class Impresora(object):
                 Impresora.imagen_anotacion(Puntos.R)
                 if page_num % 8 == 2:
                     cls.rellenar_ingredientes_receta(receta, page_num)
-
+            Impresora.tick()
             cls.rellenar_tecnica(page_num)
+            Impresora.tick()
