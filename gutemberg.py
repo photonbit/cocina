@@ -26,6 +26,7 @@ def main(argv):
     Impresora.pagina_maestra_pares()
     Formato.crear_estilos()
     Impresora.rellenar_documento()
+    Impresora.tomar_consciencia()
 
 
 def envoltorio(argv):

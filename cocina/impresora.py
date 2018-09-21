@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import os
 import time
 
 try:
@@ -416,3 +417,67 @@ class Impresora(object):
             Impresora.tick()
             cls.rellenar_tecnica(page_num)
             Impresora.tick()
+
+    @classmethod
+    def recolectar_codigo(cls):
+        with open(os.path.join(os.path.dirname(__file__), "..", "gutemberg.py"), "r") as fichero:
+            codigo = fichero.read()
+
+        ficheros = os.listdir(os.path.join(os.path.dirname(__file__)))
+        for nombre in ficheros:
+            if nombre.endswith(".py"):
+                ruta = os.path.join(os.path.dirname(__file__), nombre)
+                codigo += nombre + ":\n" + "-"*len(nombre) + "\n\n"
+                with open(ruta, "r") as fichero:
+                    codigo += fichero.read()
+        return codigo
+
+    @classmethod
+    def tomar_consciencia(cls):
+        scribus.statusMessage("Soy parte de la obra")
+
+        scribus.createCharStyle(
+            name="estilo_cuerpo_codigo",
+            font="Roboto Regular",
+            fontsize=30.0
+        )
+
+        scribus.createParagraphStyle(
+            name="estilo_codigo",
+            alignment=scribus.ALIGN_LEFT,
+            linespacingmode=Formato.INTERLINEADO_FIJO,
+            linespacing=60,
+            charstyle="estilo_cuerpo_codigo"
+        )
+
+        scribus.newDocument(
+            scribus.PAPER_A4,
+            Formato.SIN_MARGENES,
+            scribus.PORTRAIT,
+            1,  # firstPageNumber
+            scribus.UNIT_MILLIMETERS,
+            scribus.PAGE_1,  # pagesType
+            0,  # firstPageOrder
+            0  # numPage
+        )
+
+        codigo = Impresora.recolectar_codigo()
+
+        for i in range(1, 666):
+            scribus.newPage(-1)
+            scribus.gotoPage(i)
+            plegaria = "Este es cáliz número {} de mi sangre"
+            if i == 1:
+                ruego = codigo
+            else:
+                ruego = ""
+            espacio_infinito = Espacio(Puntos.O)
+            espacio_infinito.cuadro_de_texto(Puntos.O, Formato.A4, ruego, plegaria.format(i))
+
+            if i > 1:
+                scribus.linkTextFrames(plegaria.format(i - 1), plegaria.format(i))
+
+            if  scribus.getTextLength(plegaria.format(i)) == 0:
+                scribus.deletePage(i)
+                break
+            scribus.messageBox("Cosa", "Supu {} {}".format(plegaria.format(i), scribus.getTextLength(plegaria.format(i))))
