@@ -62,7 +62,6 @@ class Formato(object):
         scribus.createCharStyle(
             name="estilo_titulo",
             font="Crimson Text Bold",
-            features="bold",
             fontsize=50.0
         )
 
