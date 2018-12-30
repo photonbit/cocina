@@ -143,6 +143,19 @@ incluso sin nosotros,
 """
         },
         {
+            "titulo": "Prueba",
+            "contenido": ""
+"""
+Chupa la cuchara
+de palo.
+
+Quizás le falte sal
+o te des cuenta,
+con los años,
+que te sentaba mal.
+"""
+        },
+        {
             "titulo": "Disfruta",
             "contenido": ""
 """
@@ -171,19 +184,6 @@ con quienes lo compartimos.
 Por grande que sea la olla,
 si el caldo es solo para ti,
 siempre será menos.
-"""
-        },
-        {
-            "titulo": "Vive",
-            "contenido":  ""
-"""
-Terminada la comida
-podemos pensar
-y pensar en la siguiente.
-
-Cuidando que llegue
-cada momento
-siempre en el presente.
 """
         },
     ]
@@ -246,7 +246,7 @@ Ya está listo.
 "la sal en un bol. Calienta el agua y la leche en un cazo a fuego lento. Sácalo del fuego "
 "cuando al introducir el dedo no sientas nada. En todas partes te dirán que eches "
 "el líquido poco a poco. Hazlo como te resulte más divertido. Sigue mezclando y amasando " 
-"con las manos hasta que casi se pueda despegar fácilmente de los dedos. Añade la mantequilla" 
+"con las manos hasta que casi se pueda despegar fácilmente de los dedos. Añade la mantequilla " 
 "y sigue amasando, golpeando y enrollando, en el mismo bol si no quieres manchar mucho. "
 "\n\n"
 "Cuando después de mucho estirar, doblar y apretar la masa sea homogénea y se pueda alargar " 
