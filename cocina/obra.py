@@ -66,12 +66,10 @@ el tiempo si está
 el corazón tranquilo
 y la panza llena.
 
-Del resposo y color
-de una cuidada
-disposición
-nace sin dolor
-un plato lleno
-de emoción.
+Del reposo y color
+de la disposición
+nace un plato
+lleno de emoción.
 """
         },
         {
@@ -118,7 +116,7 @@ qué forma tendrá el pan.
 
 Nuestra fuerza,
 nuestros movimientos
-únicamente la hacen
+solo la hacen
 despertar.
 """
         },
