@@ -126,20 +126,13 @@ despertar.
             "titulo": "Mira",
             "contenido": ""
 """
-Vemos a veces
-cómo los ingredientes
-se vuelven comida,
-
-que nuestra acción
+A veces
+nuestra acción
 no es necesaria.
 
-A veces,
-
-   observar,
-
+Observar,
 incluso sin nosotros,
-
-  es parte de la receta.
+es parte de la receta.
 """
         },
         {
@@ -147,12 +140,13 @@ incluso sin nosotros,
             "contenido": ""
 """
 Chupa la cuchara
-de palo.
+de palo de
+cuando en cuando.
 
 Quizás le falte sal
 o te des cuenta,
 con los años,
-que te sentaba mal.
+qué te sentaba mal.
 """
         },
         {
