@@ -284,7 +284,7 @@ class Impresora(object):
         scribus.editMasterPage(Cocina.receta_A)
         # Cuadro receta
         Espacio.rectangulo(Puntos.Q, Dimension.A)
-        # Cuadro tecnica
+        # Cuadro planificación
         Espacio.rectangulo(Puntos.O, Dimension.B)
         # Cuadro anotaciones
         Espacio.rectangulo(Puntos.P, Dimension.C)
@@ -297,7 +297,7 @@ class Impresora(object):
         scribus.editMasterPage(Cocina.receta_B)
         # Cuadro receta
         Espacio.rectangulo(Puntos.P, Dimension.A)
-        # Cuadro tecnica
+        # Cuadro planificación
         Espacio.rectangulo(Puntos.O, Dimension.B)
         # Cuadro anotaciones
         Espacio.rectangulo(Puntos.R, Dimension.C)
@@ -367,33 +367,6 @@ class Impresora(object):
         )
 
     @classmethod
-    def rellenar_tecnica(cls, page_num):
-        scribus.statusMessage("Rellenando cuadro de técnicas")
-        if page_num % 2:
-            espacio_tecnica = Espacio(Puntos.S, -90)
-        else:
-            espacio_tecnica = Espacio(Puntos.P, 90)
-
-        if page_num == 1:
-            texto = Cocina.tecnicas[0]["nombre"] + "\n\n\n"
-            for nombre, tecnica in Cocina.tecnicas[0]["compendio"].iteritems():
-                texto += nombre + "\n"
-                texto += tecnica + "\n\n"
-        else:
-            texto = ""
-
-        espacio_tecnica.cuadro_de_texto(
-            Puntos.O,
-            Dimension.D,
-            texto,
-            "cuadro_tecnicas_{}".format(page_num),
-            "parrafo_receta",
-            True
-        )
-        if page_num > 1:
-            scribus.linkTextFrames("cuadro_tecnicas_{}".format(page_num-1), "cuadro_tecnicas_{}".format(page_num))
-
-    @classmethod
     def rellenar_documento(cls):
         i_poema = iter(Cocina.poemas)
         i_receta = iter(Cocina.recetas)
@@ -413,8 +386,6 @@ class Impresora(object):
                 Impresora.imagen_anotacion(Puntos.R)
                 if page_num % 8 == 2:
                     cls.rellenar_ingredientes_receta(receta, page_num)
-            Impresora.tick()
-            cls.rellenar_tecnica(page_num)
             Impresora.tick()
 
     @classmethod
@@ -462,7 +433,7 @@ class Impresora(object):
 
         codigo = Impresora.recolectar_codigo()
 
-        for i in range(1, 666):
+        for i in range(1, 20):
             scribus.newPage(-1)
             scribus.gotoPage(i)
             plegaria = "Este es cáliz número {} de mi sangre"
@@ -479,4 +450,3 @@ class Impresora(object):
             if  scribus.getTextLength(plegaria.format(i)) == 0:
                 scribus.deletePage(i)
                 break
-            scribus.messageBox("Cosa", "Supu {} {}".format(plegaria.format(i), scribus.getTextLength(plegaria.format(i))))
