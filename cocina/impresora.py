@@ -80,7 +80,8 @@ class Formato(object):
         scribus.createParagraphStyle(
             name="parrafo_titulo",
             alignment=scribus.ALIGN_LEFT,
-            charstyle="estilo_titulo"
+            charstyle="estilo_titulo",
+            linespacing=80
         )
 
         scribus.createParagraphStyle(
@@ -97,6 +98,14 @@ class Formato(object):
             linespacingmode=Formato.INTERLINEADO_FIJO,
             linespacing=60,
             charstyle="estilo_cuerpo_prosa"
+        )
+
+        scribus.createParagraphStyle(
+            name="parrafo_lista",
+            alignment=scribus.ALIGN_LEFT,
+            linespacingmode=Formato.INTERLINEADO_FIJO,
+            linespacing=70.0,
+            charstyle="estilo_cuerpo_poema"
         )
 
     @classmethod
@@ -126,7 +135,9 @@ class Dimension(object):
     A = Punto(Formato.X[2], Formato.Y[2])
     B = Punto(Formato.X[3] - 20, Formato.Y[1] - 20)
     C = Punto(Formato.X[1] - 20 , Formato.Y[2])
-    D = Punto(Formato.Y[1] - 20 , Formato.X[3])
+
+    D = Punto(Formato.Y[1] - 40 , Formato.X[3] - 40)
+    E = Punto(Formato.X[3] - 60, Formato.Y[1] - 80)
 
 
 class Puntos(object):
@@ -135,6 +146,8 @@ class Puntos(object):
     Q = Punto(Formato.X[1] - 10, Formato.Y[1] - 10)
     R = Punto(Formato.X[2] + 10, Formato.Y[1] - 10)
     S = Punto(Formato.X[3] - 10, Formato.Y[0] + 10)
+
+    T = Punto(Formato.X[0] + 20, Formato.Y[0] + 20)
 
 
 #   Puntos:
@@ -367,6 +380,54 @@ class Impresora(object):
         )
 
     @classmethod
+    def rellenar_menu(cls, page_num):
+        scribus.statusMessage("Rellenando cuadro de técnicas")
+        espacio_menu = Espacio(Puntos.O)
+
+        espacio_menu.cuadro_de_texto(
+            Punto(Puntos.O.x, Puntos.O.y),
+            Dimension.E,
+            "Menú Semanal",
+            "cuadro_titulo_menu_{}".format(page_num),
+            "parrafo_titulo",
+            False
+        )
+
+        menu = "\n"
+        menu += "Lunes{0}Miércoles{1}Viernes\n".format("\t" * 12, "\t" * 11)
+        menu += " Comida:{0} Comida:{0} Comida:\n".format("\t" * 11)
+        menu += " Cena:{0} Cena:{0} Cena\n\n".format("\t" * 12)
+        menu += "Martes{0}Jueves{0}Sábado\n".format("\t" * 12)
+        menu += " Comida:{0} Comida:{0} Comida:\n".format("\t" * 11)
+        menu += " Cena:{0} Cena:{0} Cena:".format("\t" * 12)
+
+        espacio_menu.cuadro_de_texto(
+            Punto(Puntos.O.x, Puntos.O.y+20),
+            Dimension.E,
+            menu,
+            "cuadro_menu_{}".format(page_num),
+            "parrafo_receta",
+            False
+        )
+
+    @classmethod
+    def rellenar_lista(cls, page_num):
+        espacio_lista = Espacio(Puntos.S, -90)
+
+        texto = "\t\t\tCompra Semanal\n"
+
+        texto += "\n[  ]" * 26
+
+        espacio_lista.cuadro_de_texto(
+            Puntos.O,
+            Dimension.D,
+            texto,
+            "cuadro_lista_{}".format(page_num),
+            "parrafo_titulo",
+            False
+        )
+
+    @classmethod
     def rellenar_documento(cls):
         i_poema = iter(Cocina.poemas)
         i_receta = iter(Cocina.recetas)
@@ -376,6 +437,7 @@ class Impresora(object):
             if page_num % 2:
                 scribus.applyMasterPage(Cocina.receta_A, page_num)
                 Impresora.imagen_anotacion(Puntos.P)
+                Impresora.rellenar_menu(page_num)
                 if page_num % 8 == 1:
                     receta = i_receta.next()
                     cls.rellenar_pasos_receta(receta, page_num)
@@ -383,6 +445,7 @@ class Impresora(object):
                     cls.rellenar_poema(i_poema.next(), page_num)
             else:
                 scribus.applyMasterPage(Cocina.receta_B, page_num)
+                Impresora.rellenar_lista(page_num)
                 Impresora.imagen_anotacion(Puntos.R)
                 if page_num % 8 == 2:
                     cls.rellenar_ingredientes_receta(receta, page_num)
