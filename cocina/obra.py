@@ -224,6 +224,10 @@ Ya está listo.
         {
             "titulo": "Huevos Benedict",
             "ingredientes": [
+                (1, "unidad", "Huevo pochado"),
+                (1, "unidad", "Muffin inglés"),
+                (30, "mililitros", "Salsa holandesa"),
+                (2, "unidad", "huevos")
             ],
             "contenido": ""
 """
