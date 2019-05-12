@@ -124,17 +124,17 @@ class Formato(object):
 
 class Dimension(object):
     A = Punto(Formato.X[2], Formato.Y[2])
-    B = Punto(Formato.X[3], Formato.Y[1])
-    C = Punto(Formato.X[1], Formato.Y[2])
-    D = Punto(Formato.Y[1], Formato.X[3])
+    B = Punto(Formato.X[3] - 20, Formato.Y[1] - 20)
+    C = Punto(Formato.X[1] - 20 , Formato.Y[2])
+    D = Punto(Formato.Y[1] - 20 , Formato.X[3])
 
 
 class Puntos(object):
-    O = Punto(Formato.X[0], Formato.Y[0])
-    P = Punto(Formato.X[0], Formato.Y[1])
-    Q = Punto(Formato.X[1], Formato.Y[1])
-    R = Punto(Formato.X[2], Formato.Y[1])
-    S = Punto(Formato.X[3], Formato.Y[0])
+    O = Punto(Formato.X[0] + 10, Formato.Y[0] + 10)
+    P = Punto(Formato.X[0] + 10, Formato.Y[1] - 10)
+    Q = Punto(Formato.X[1] - 10, Formato.Y[1] - 10)
+    R = Punto(Formato.X[2] + 10, Formato.Y[1] - 10)
+    S = Punto(Formato.X[3] - 10, Formato.Y[0] + 10)
 
 
 #   Puntos:
@@ -433,7 +433,7 @@ class Impresora(object):
 
         codigo = Impresora.recolectar_codigo()
 
-        for i in range(1, 20):
+        for i in range(1, 7):
             scribus.newPage(-1)
             scribus.gotoPage(i)
             plegaria = "Este es cáliz número {} de mi sangre"
