@@ -185,6 +185,37 @@ class PuntosPortada(object):
     K = Punto(Y.x, R.y)
     L = Punto(A4.x, R.y)
 
+#   Puntos lenguetas:
+#
+#     O---------------+----------+
+#     |               |        \ |
+#     |     /A-B\/C-D\|         \|
+#     |----J----K-----L----------+
+#     |    |    |     |          |
+#     |    |    |     |          |
+#     |    |    |     |          |
+#     |----Z----Y-----W----------+
+#     |    \E-F/\G-H/ |         /|
+#     |_______________+_______/__|
+#
+
+
+class PuntosLenguetas(object):
+    W = PuntosPortada.W
+    Y = PuntosPortada.Y
+    Z = PuntosPortada.Z
+    J = PuntosPortada.J
+    K = PuntosPortada.K
+    L = PuntosPortada.L
+
+    A = Punto(J.x + 10, J.y - 30)
+    B = Punto(K.x - 10, A.y)
+    C = Punto(K.x + 10, A.y)
+    D = Punto(L.x - 10, A.y)
+    E = Punto(A.x, Z.y + 30)
+    F = Punto(B.x, E.y)
+    G = Punto(C.x, E.y)
+    H = Punto(D.x, E.y)
 
 class Espacio(object):
 
@@ -482,6 +513,24 @@ class Impresora(object):
             Formato.DOBLADO_MONTE
         )
         Espacio.linea(PuntosPortada.K, PuntosPortada.Y, Formato.DOBLADO_MONTE)
+        Espacio.multi_linea([
+            PuntosLenguetas.J,
+            PuntosLenguetas.A,
+            PuntosLenguetas.B,
+            PuntosLenguetas.K,
+            PuntosLenguetas.C,
+            PuntosLenguetas.D,
+            PuntosLenguetas.L,
+        ])
+        Espacio.multi_linea([
+            PuntosLenguetas.Z,
+            PuntosLenguetas.E,
+            PuntosLenguetas.F,
+            PuntosLenguetas.Y,
+            PuntosLenguetas.G,
+            PuntosLenguetas.H,
+            PuntosLenguetas.W,
+        ])
 
     @classmethod
     def rellenar_documento(cls):
