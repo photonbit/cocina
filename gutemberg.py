@@ -5,9 +5,9 @@ import sys
 
 try:
     import scribus
-except ImportError, err:
-    print "Esto está pensado para ser ejecutado desde Scribus."
-    print "Sin Scribus no hay escrito."
+except ImportError as err:
+    print("Esto está pensado para ser ejecutado desde Scribus.")
+    print("Sin Scribus no hay escrito.")
     sys.exit(1)
 
 from cocina.impresora import Impresora, Formato
@@ -21,6 +21,7 @@ def main(argv):
     else:
         Impresora.cocinar_lento = False
     Impresora.iniciar_portada()
+    Impresora.pintar_portada()
     Impresora.iniciar_documento()
     Impresora.pagina_maestra_impares()
     Impresora.pagina_maestra_pares()

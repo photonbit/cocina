@@ -7,9 +7,9 @@ import time
 
 try:
     import scribus
-except ImportError, err:
-    print "Esto está pensado para ser ejecutado desde Scribus."
-    print "Sin Scribus no hay escrito."
+except ImportError as err:
+    print("Esto está pensado para ser ejecutado desde Scribus.")
+    print("Sin Scribus no hay escrito.")
     sys.exit(1)
 
 import math
@@ -28,6 +28,12 @@ class Punto(object):
         return Punto(a, b)
 
 
+A3 = Punto(*scribus.PAPER_A3)
+A4 = Punto(*scribus.PAPER_A4)
+A5 = Punto(*scribus.PAPER_A5)
+A6 = Punto(*scribus.PAPER_A6)
+
+
 class Formato(object):
     INTERLINEADO_FIJO = 0
     INTERLINEADO_AUTOMATICO = 1
@@ -38,24 +44,8 @@ class Formato(object):
     MARGENES_3_4_DIAGONAL = 3.0 / 4
     MARGENES_ISO = 1.0
 
-    A3 = Punto(*scribus.PAPER_A3)
-    A4 = Punto(*scribus.PAPER_A4)
-    A5 = Punto(*scribus.PAPER_A5)
-    A6 = Punto(*scribus.PAPER_A6)
-
-    X = (
-        0,
-        A4.x - A5.x,
-        A5.x,
-        A4.x
-    )
-
-    Y = (
-        0,
-        A4.y - A5.y,
-        A5.y,
-        A4.y
-    )
+    DOBLADO_VALLE = scribus.LINE_DASH
+    DOBLADO_MONTE = scribus.LINE_DASHDOT
 
     @classmethod
     def crear_estilos(cls):
@@ -132,25 +122,25 @@ class Formato(object):
 
 
 class Dimension(object):
-    A = Punto(Formato.X[2], Formato.Y[2])
-    B = Punto(Formato.X[3] - 20, Formato.Y[1] - 20)
-    C = Punto(Formato.X[1] - 20 , Formato.Y[2])
+    A = Punto(A5.x, A5.y)
+    B = Punto(A4.x - 20, A4.y - A5.y - 20)
+    C = Punto(A4.x - A5.x - 20, A5.y)
 
-    D = Punto(Formato.Y[1] - 40 , Formato.X[3] - 40)
-    E = Punto(Formato.X[3] - 60, Formato.Y[1] - 80)
+    D = Punto(A4.y - A5.y - 40, A4.x - 40)
+    E = Punto(A4.x - 60, A4.y - A5.y - 80)
 
 
 class Puntos(object):
-    O = Punto(Formato.X[0] + 10, Formato.Y[0] + 10)
-    P = Punto(Formato.X[0] + 10, Formato.Y[1] - 10)
-    Q = Punto(Formato.X[1] - 10, Formato.Y[1] - 10)
-    R = Punto(Formato.X[2] + 10, Formato.Y[1] - 10)
-    S = Punto(Formato.X[3] - 10, Formato.Y[0] + 10)
+    O = Punto(0 + 10, 0 + 10)
+    P = Punto(0 + 10, A4.y - A5.y - 10)
+    Q = Punto(A4.x - A5.x - 10, A4.y - A5.y - 10)
+    R = Punto(A5.x + 10, A4.y - A5.y - 10)
+    S = Punto(A4.x - 10, 0 + 10)
 
-    T = Punto(Formato.X[0] + 20, Formato.Y[0] + 20)
+    T = Punto(0 + 20, 0 + 20)
 
 
-#   Puntos:
+#   Puntos obra:
 #
 #     O------------S   O------------S
 #     |            |   |            |
@@ -165,6 +155,36 @@ class Puntos(object):
 #     |___|________|   |________|___|
 #
 
+#   Puntos portada:
+#
+#     O--------------P-------Q--+
+#     |              |        \ |
+#     |              |         \|
+#     |----J----K----L----------R
+#     |    |    |    |          |
+#     |    |    |    |          |
+#     |    |    |    |          |
+#     |----Z----Y----W----------S
+#     |              |         /|
+#     |              |        / |
+#     |______________V______T___|
+#
+
+class PuntosPortada(object):
+    O = Punto(0, 0)
+    P = Punto(A4.x, 0)
+    Q = Punto(A4.x + A5.y / 2, 0)
+    R = Punto(A3.y, (A3.x - A5.x)/2)
+    S = Punto(A3.y, A3.x/2 + A5.x/2)
+    T = Punto(Q.x, A3.x)
+    V = Punto(A4.x, A3.x)
+    W = Punto(P.x, S.y)
+    Y = Punto(W.x - R.y, S.y)
+    Z = Punto(Y.x - A5.y/2, S.y)
+    J = Punto(Z.x, R.y)
+    K = Punto(Y.x, R.y)
+    L = Punto(A4.x, R.y)
+
 
 class Espacio(object):
 
@@ -175,7 +195,7 @@ class Espacio(object):
         theta = math.radians(self.rotacion)
         coseno = math.cos(theta)
         seno = math.sin(theta)
-        return [Punto(coseno, seno), Punto( -seno, coseno)]
+        return [Punto(coseno, seno), Punto(-seno, coseno)]
 
     def __init__(self, origen, rotacion=0):
         self.origen = origen
@@ -194,8 +214,20 @@ class Espacio(object):
         scribus.createRect(posicion.x, posicion.y, dimension.x, dimension.y)
 
     @classmethod
-    def linea(clscls, inicio, fin):
-        scribus.createLine(inicio.x, inicio.y, fin.x, fin.y)
+    def linea(clscls, inicio, fin, estilo=None):
+        nombre = scribus.createLine(inicio.x, inicio.y, fin.x, fin.y)
+        if estilo:
+            scribus.setLineStyle(estilo, nombre)
+
+    @classmethod
+    def multi_linea(cls, puntos, estilo=None):
+        lista = []
+        for punto in puntos:
+            lista.append(punto.x)
+            lista.append(punto.y)
+        nombre = scribus.createPolyLine(lista)
+        if estilo:
+            scribus.setLineStyle(estilo, nombre)
 
     def cuadro_de_texto(self, posicion, dimension, texto, nombre, estilo=None, marginar=True):
         # Seleccionar tipo de margen según estilo
@@ -235,7 +267,6 @@ class Impresora(object):
             if page > 1:
                 scribus.scrollDocument(0, 1207)  # Depende del tamaño de la ventana :(
 
-
     @classmethod
     def iniciar_portada(cls):
         scribus.statusMessage("Generando documento de portada")
@@ -244,7 +275,7 @@ class Impresora(object):
             Formato.SIN_MARGENES,
             scribus.LANDSCAPE,
             1,  # firstPageNumber
-            scribus.UNIT_MILLIMETERS,
+            scribus.UNIT_POINTS,
             scribus.PAGE_1,  # pagesType
             0,  # firstPageOrder
             1  # numPage
@@ -321,7 +352,7 @@ class Impresora(object):
     def rellena_titulo(cls, titulo, espacio, origen, page_num):
         espacio.cuadro_de_texto(
             Punto(origen.x, origen.y + 70),
-            Punto(Formato.A5.x, 45),
+            Punto(A5.x, 45),
             titulo,
             "cuadro_titulo_{}".format(page_num),
             "parrafo_titulo",
@@ -402,7 +433,7 @@ class Impresora(object):
         menu += " Cena:{0} Cena:{0} Cena:".format("\t" * 12)
 
         espacio_menu.cuadro_de_texto(
-            Punto(Puntos.O.x, Puntos.O.y+20),
+            Punto(Puntos.O.x, Puntos.O.y + 20),
             Dimension.E,
             menu,
             "cuadro_menu_{}".format(page_num),
@@ -414,9 +445,7 @@ class Impresora(object):
     def rellenar_lista(cls, page_num):
         espacio_lista = Espacio(Puntos.S, -90)
 
-        texto = "\t\t\tCompra Semanal\n"
-
-        texto += "\n[  ]" * 26
+        texto = "\t\t\tCompra Semanal"
 
         espacio_lista.cuadro_de_texto(
             Puntos.O,
@@ -426,6 +455,33 @@ class Impresora(object):
             "parrafo_titulo",
             False
         )
+
+    @classmethod
+    def pintar_portada(cls):
+        Espacio.multi_linea([
+            PuntosPortada.P,
+            PuntosPortada.Q,
+            PuntosPortada.R,
+            PuntosPortada.S,
+            PuntosPortada.T,
+            PuntosPortada.V,
+            PuntosPortada.W,
+            PuntosPortada.Y,
+            PuntosPortada.Z,
+            PuntosPortada.J,
+            PuntosPortada.K,
+            PuntosPortada.L,
+            PuntosPortada.P,
+        ])
+        Espacio.multi_linea([
+            PuntosPortada.R,
+            PuntosPortada.L,
+            PuntosPortada.W,
+            PuntosPortada.S,
+        ],
+            Formato.DOBLADO_MONTE
+        )
+        Espacio.linea(PuntosPortada.K, PuntosPortada.Y, Formato.DOBLADO_MONTE)
 
     @classmethod
     def rellenar_documento(cls):
@@ -460,7 +516,7 @@ class Impresora(object):
         for nombre in ficheros:
             if nombre.endswith(".py"):
                 ruta = os.path.join(os.path.dirname(__file__), nombre)
-                codigo += nombre + ":\n" + "-"*len(nombre) + "\n\n"
+                codigo += nombre + ":\n" + "-" * len(nombre) + "\n\n"
                 with open(ruta, "r") as fichero:
                     codigo += fichero.read()
         return codigo
@@ -505,11 +561,11 @@ class Impresora(object):
             else:
                 ruego = ""
             espacio_infinito = Espacio(Puntos.O)
-            espacio_infinito.cuadro_de_texto(Puntos.O, Formato.A4, ruego, plegaria.format(i))
+            espacio_infinito.cuadro_de_texto(Puntos.O, A4, ruego, plegaria.format(i))
 
             if i > 1:
                 scribus.linkTextFrames(plegaria.format(i - 1), plegaria.format(i))
 
-            if  scribus.getTextLength(plegaria.format(i)) == 0:
+            if scribus.getTextLength(plegaria.format(i)) == 0:
                 scribus.deletePage(i)
                 break
