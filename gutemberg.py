@@ -12,10 +12,15 @@ except ImportError as err:
 
 from cocina.impresora import Impresora, Formato
 
+
 def main(argv):
-    lento = scribus.messageBox('Poco a poco', '¿Quieres cocinar a fuego lento?',
-                        scribus.ICON_WARNING, scribus.BUTTON_YES,
-                                scribus.BUTTON_NO)
+    lento = scribus.messageBox(
+        "Poco a poco",
+        "¿Quieres cocinar a fuego lento?",
+        scribus.ICON_WARNING,
+        scribus.BUTTON_YES,
+        scribus.BUTTON_NO,
+    )
     if lento == scribus.BUTTON_YES:
         Impresora.cocinar_lento = True
     else:
@@ -41,5 +46,5 @@ def envoltorio(argv):
         scribus.progressReset()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     envoltorio(sys.argv)
