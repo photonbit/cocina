@@ -238,6 +238,9 @@ Abre un muffin y sobre una mitad coloca una loncha de bacon, un huevo pochado y 
 
     imagenes = os.listdir(os.path.join(os.path.dirname(__file__), "..", "imagenes"))
 
+    cubierta_frontal = os.path.join(os.path.dirname(__file__), "..", "cubierta", "frontal.png")
+    cubierta_trasera = os.path.join(os.path.dirname(__file__), "..", "cubierta", "trasera.png")
+
     @classmethod
     def imagen_aleatoria(cls):
         return os.path.join(

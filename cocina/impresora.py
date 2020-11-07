@@ -250,7 +250,7 @@ class Espacio(object):
         scribus.createRect(posicion.x, posicion.y, dimension.x, dimension.y)
 
     @classmethod
-    def linea(clscls, inicio, fin, estilo=None):
+    def linea(cls, inicio, fin, estilo=None):
         nombre = scribus.createLine(inicio.x, inicio.y, fin.x, fin.y)
         if estilo:
             scribus.setLineStyle(estilo, nombre)
@@ -495,6 +495,14 @@ class Impresora(object):
         )
 
     @classmethod
+    def colocar_imagenes_cubierta(cls):
+        espacio_imagen = Espacio(PuntosPortada.R, -90)
+        espacio_imagen.imagen(PuntosPortada.O, A5, Cocina.cubierta_frontal)
+
+        espacio_imagen = Espacio(PuntosPortada.Z, 90)
+        espacio_imagen.imagen(PuntosPortada.O, Punto(A5.x, A5.y / 2), Cocina.cubierta_trasera)
+
+    @classmethod
     def pintar_portada(cls):
         Espacio.multi_linea(
             [
@@ -545,6 +553,7 @@ class Impresora(object):
                 PuntosLenguetas.W,
             ]
         )
+        Impresora.colocar_imagenes_cubierta()
 
     @classmethod
     def rellenar_documento(cls):
