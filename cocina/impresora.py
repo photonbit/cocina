@@ -50,28 +50,22 @@ class Formato(object):
     @classmethod
     def crear_estilos(cls):
         scribus.createCharStyle(
-            name="estilo_titulo",
-            font="Crimson Text Bold",
-            fontsize=50.0
+            name="estilo_titulo", font="Crimson Text Bold", fontsize=50.0
         )
 
         scribus.createCharStyle(
-            name="estilo_cuerpo_poema",
-            font="Lato Regular",
-            fontsize=35.0
+            name="estilo_cuerpo_poema", font="Lato Regular", fontsize=35.0
         )
 
         scribus.createCharStyle(
-            name="estilo_cuerpo_prosa",
-            font="Lato Regular",
-            fontsize=30.0
+            name="estilo_cuerpo_prosa", font="Lato Regular", fontsize=30.0
         )
 
         scribus.createParagraphStyle(
             name="parrafo_titulo",
             alignment=scribus.ALIGN_LEFT,
             charstyle="estilo_titulo",
-            linespacing=80
+            linespacing=80,
         )
 
         scribus.createParagraphStyle(
@@ -79,7 +73,7 @@ class Formato(object):
             alignment=scribus.ALIGN_LEFT,
             linespacingmode=Formato.INTERLINEADO_FIJO,
             linespacing=70.0,
-            charstyle="estilo_cuerpo_poema"
+            charstyle="estilo_cuerpo_poema",
         )
 
         scribus.createParagraphStyle(
@@ -87,7 +81,7 @@ class Formato(object):
             alignment=scribus.ALIGN_BLOCK,
             linespacingmode=Formato.INTERLINEADO_FIJO,
             linespacing=60,
-            charstyle="estilo_cuerpo_prosa"
+            charstyle="estilo_cuerpo_prosa",
         )
 
         scribus.createParagraphStyle(
@@ -95,26 +89,35 @@ class Formato(object):
             alignment=scribus.ALIGN_LEFT,
             linespacingmode=Formato.INTERLINEADO_FIJO,
             linespacing=70.0,
-            charstyle="estilo_cuerpo_poema"
+            charstyle="estilo_cuerpo_poema",
         )
 
     @classmethod
-    def marginar(cls, punto, dimension, norma=MARGENES_5_7_ANCHO, traslado_x=0.5, traslado_y=0.5):
+    def marginar(
+        cls, punto, dimension, norma=MARGENES_5_7_ANCHO, traslado_x=0.5, traslado_y=0.5
+    ):
         alpha = math.atan2(dimension.y, dimension.x)
 
         if norma == Formato.MARGENES_5_7_ANCHO or norma == Formato.MARGENES_ISO:
             # Conocemos la relación del cateto opuesto
             nuevo_ancho = dimension.x * norma
             nueva_hipo = nuevo_ancho / math.cos(alpha)
-        elif norma == Formato.MARGENES_2_3_DIAGONAL or norma == Formato.MARGENES_3_4_DIAGONAL:
+        elif (
+            norma == Formato.MARGENES_2_3_DIAGONAL
+            or norma == Formato.MARGENES_3_4_DIAGONAL
+        ):
             # Conocemos la relación de la hipotenusa
             hipo = math.hypot(dimension.x, dimension.y)
             nueva_hipo = hipo * norma
         else:
             raise Exception("Pero qué formato de margen es ese")
 
-        nueva_dimension = Punto(math.cos(alpha) * nueva_hipo, math.sin(alpha) * nueva_hipo)
-        margenes = Punto(dimension.x - nueva_dimension.x, dimension.y - nueva_dimension.y)
+        nueva_dimension = Punto(
+            math.cos(alpha) * nueva_hipo, math.sin(alpha) * nueva_hipo
+        )
+        margenes = Punto(
+            dimension.x - nueva_dimension.x, dimension.y - nueva_dimension.y
+        )
 
         p = Punto(punto.x + margenes.x * traslado_x, punto.y + margenes.y * traslado_y)
 
@@ -170,20 +173,22 @@ class Puntos(object):
 #     |______________V______T___|
 #
 
+
 class PuntosPortada(object):
     O = Punto(0, 0)
     P = Punto(A4.x, 0)
     Q = Punto(A4.x + A5.y / 2, 0)
-    R = Punto(A3.y, (A3.x - A5.x)/2)
-    S = Punto(A3.y, A3.x/2 + A5.x/2)
+    R = Punto(A3.y, (A3.x - A5.x) / 2)
+    S = Punto(A3.y, A3.x / 2 + A5.x / 2)
     T = Punto(Q.x, A3.x)
     V = Punto(A4.x, A3.x)
     W = Punto(P.x, S.y)
     Y = Punto(W.x - R.y, S.y)
-    Z = Punto(Y.x - A5.y/2, S.y)
+    Z = Punto(Y.x - A5.y / 2, S.y)
     J = Punto(Z.x, R.y)
     K = Punto(Y.x, R.y)
     L = Punto(A4.x, R.y)
+
 
 #   Puntos lenguetas:
 #
@@ -217,8 +222,8 @@ class PuntosLenguetas(object):
     G = Punto(C.x, E.y)
     H = Punto(D.x, E.y)
 
-class Espacio(object):
 
+class Espacio(object):
     def _genera_matriz(self):
         if not self.rotacion:
             return None
@@ -260,7 +265,9 @@ class Espacio(object):
         if estilo:
             scribus.setLineStyle(estilo, nombre)
 
-    def cuadro_de_texto(self, posicion, dimension, texto, nombre, estilo=None, marginar=True):
+    def cuadro_de_texto(
+        self, posicion, dimension, texto, nombre, estilo=None, marginar=True
+    ):
         # Seleccionar tipo de margen según estilo
         if estilo == "parrafo_receta":
             norma_margen = Formato.MARGENES_3_4_DIAGONAL
@@ -309,7 +316,7 @@ class Impresora(object):
             scribus.UNIT_POINTS,
             scribus.PAGE_1,  # pagesType
             0,  # firstPageOrder
-            1  # numPage
+            1,  # numPage
         )
         scribus.setInfo(Cocina.autor, Cocina.info, Cocina.descripcion)
 
@@ -324,7 +331,7 @@ class Impresora(object):
             scribus.UNIT_MILLIMETERS,
             scribus.PAGE_1,  # pagesType
             0,  # firstPageOrder
-            Cocina.num_paginas  # numPage
+            Cocina.num_paginas,  # numPage
         )
         scribus.setInfo(Cocina.autor, Cocina.info, Cocina.descripcion)
         scribus.zoomDocument(-100)
@@ -342,7 +349,7 @@ class Impresora(object):
         for i in range(1, 10):
             Espacio.linea(
                 Punto(base.x + margen_izqdo, inicio.y + salto * i),
-                Punto(base.x + margen_derecho, inicio.y + salto * i)
+                Punto(base.x + margen_derecho, inicio.y + salto * i),
             )
 
     @classmethod
@@ -387,7 +394,7 @@ class Impresora(object):
             titulo,
             "cuadro_titulo_{}".format(page_num),
             "parrafo_titulo",
-            True
+            True,
         )
 
     @classmethod
@@ -400,7 +407,7 @@ class Impresora(object):
             Dimension.A,
             receta["contenido"],
             "cuadro_contenido_{}".format(page_num),
-            "parrafo_receta"
+            "parrafo_receta",
         )
 
     @classmethod
@@ -424,7 +431,7 @@ class Impresora(object):
             Dimension.A,
             texto_ingredientes,
             "cuadro_contenido_{}".format(page_num),
-            "parrafo_receta"
+            "parrafo_receta",
         )
 
     @classmethod
@@ -438,7 +445,7 @@ class Impresora(object):
             Dimension.A,
             poema["contenido"],
             "cuadro_contenido_{}".format(page_num),
-            "parrafo_poema"
+            "parrafo_poema",
         )
 
     @classmethod
@@ -452,7 +459,7 @@ class Impresora(object):
             "Menú Semanal",
             "cuadro_titulo_menu_{}".format(page_num),
             "parrafo_titulo",
-            False
+            False,
         )
 
         menu = "\n"
@@ -469,7 +476,7 @@ class Impresora(object):
             menu,
             "cuadro_menu_{}".format(page_num),
             "parrafo_receta",
-            False
+            False,
         )
 
     @classmethod
@@ -484,53 +491,60 @@ class Impresora(object):
             texto,
             "cuadro_lista_{}".format(page_num),
             "parrafo_titulo",
-            False
+            False,
         )
 
     @classmethod
     def pintar_portada(cls):
-        Espacio.multi_linea([
-            PuntosPortada.P,
-            PuntosPortada.Q,
-            PuntosPortada.R,
-            PuntosPortada.S,
-            PuntosPortada.T,
-            PuntosPortada.V,
-            PuntosPortada.W,
-            PuntosPortada.Y,
-            PuntosPortada.Z,
-            PuntosPortada.J,
-            PuntosPortada.K,
-            PuntosPortada.L,
-            PuntosPortada.P,
-        ])
-        Espacio.multi_linea([
-            PuntosPortada.R,
-            PuntosPortada.L,
-            PuntosPortada.W,
-            PuntosPortada.S,
-        ],
-            Formato.DOBLADO_MONTE
+        Espacio.multi_linea(
+            [
+                PuntosPortada.P,
+                PuntosPortada.Q,
+                PuntosPortada.R,
+                PuntosPortada.S,
+                PuntosPortada.T,
+                PuntosPortada.V,
+                PuntosPortada.W,
+                PuntosPortada.Y,
+                PuntosPortada.Z,
+                PuntosPortada.J,
+                PuntosPortada.K,
+                PuntosPortada.L,
+                PuntosPortada.P,
+            ]
+        )
+        Espacio.multi_linea(
+            [
+                PuntosPortada.R,
+                PuntosPortada.L,
+                PuntosPortada.W,
+                PuntosPortada.S,
+            ],
+            Formato.DOBLADO_MONTE,
         )
         Espacio.linea(PuntosPortada.K, PuntosPortada.Y, Formato.DOBLADO_MONTE)
-        Espacio.multi_linea([
-            PuntosLenguetas.J,
-            PuntosLenguetas.A,
-            PuntosLenguetas.B,
-            PuntosLenguetas.K,
-            PuntosLenguetas.C,
-            PuntosLenguetas.D,
-            PuntosLenguetas.L,
-        ])
-        Espacio.multi_linea([
-            PuntosLenguetas.Z,
-            PuntosLenguetas.E,
-            PuntosLenguetas.F,
-            PuntosLenguetas.Y,
-            PuntosLenguetas.G,
-            PuntosLenguetas.H,
-            PuntosLenguetas.W,
-        ])
+        Espacio.multi_linea(
+            [
+                PuntosLenguetas.J,
+                PuntosLenguetas.A,
+                PuntosLenguetas.B,
+                PuntosLenguetas.K,
+                PuntosLenguetas.C,
+                PuntosLenguetas.D,
+                PuntosLenguetas.L,
+            ]
+        )
+        Espacio.multi_linea(
+            [
+                PuntosLenguetas.Z,
+                PuntosLenguetas.E,
+                PuntosLenguetas.F,
+                PuntosLenguetas.Y,
+                PuntosLenguetas.G,
+                PuntosLenguetas.H,
+                PuntosLenguetas.W,
+            ]
+        )
 
     @classmethod
     def rellenar_documento(cls):
@@ -558,7 +572,9 @@ class Impresora(object):
 
     @classmethod
     def recolectar_codigo(cls):
-        with open(os.path.join(os.path.dirname(__file__), "..", "gutemberg.py"), "r") as fichero:
+        with open(
+            os.path.join(os.path.dirname(__file__), "..", "gutemberg.py"), "r"
+        ) as fichero:
             codigo = fichero.read()
 
         ficheros = os.listdir(os.path.join(os.path.dirname(__file__)))
@@ -575,9 +591,7 @@ class Impresora(object):
         scribus.statusMessage("Soy parte de la obra")
 
         scribus.createCharStyle(
-            name="estilo_cuerpo_codigo",
-            font="Roboto Regular",
-            fontsize=30.0
+            name="estilo_cuerpo_codigo", font="Roboto Regular", fontsize=30.0
         )
 
         scribus.createParagraphStyle(
@@ -585,7 +599,7 @@ class Impresora(object):
             alignment=scribus.ALIGN_LEFT,
             linespacingmode=Formato.INTERLINEADO_FIJO,
             linespacing=60,
-            charstyle="estilo_cuerpo_codigo"
+            charstyle="estilo_cuerpo_codigo",
         )
 
         scribus.newDocument(
@@ -596,7 +610,7 @@ class Impresora(object):
             scribus.UNIT_MILLIMETERS,
             scribus.PAGE_1,  # pagesType
             0,  # firstPageOrder
-            0  # numPage
+            0,  # numPage
         )
 
         codigo = Impresora.recolectar_codigo()
