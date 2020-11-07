@@ -599,18 +599,6 @@ class Impresora(object):
     def tomar_consciencia(cls):
         scribus.statusMessage("Soy parte de la obra")
 
-        scribus.createCharStyle(
-            name="estilo_cuerpo_codigo", font="Roboto Regular", fontsize=30.0
-        )
-
-        scribus.createParagraphStyle(
-            name="estilo_codigo",
-            alignment=scribus.ALIGN_LEFT,
-            linespacingmode=Formato.INTERLINEADO_FIJO,
-            linespacing=60,
-            charstyle="estilo_cuerpo_codigo",
-        )
-
         scribus.newDocument(
             scribus.PAPER_A4,
             Formato.SIN_MARGENES,
@@ -622,22 +610,36 @@ class Impresora(object):
             0,  # numPage
         )
 
+        scribus.createCharStyle(
+            name="estilo_cuerpo_codigo", font="Source Code Pro Regular", fontsize=12.0
+        )
+
+        scribus.createParagraphStyle(
+            name="estilo_codigo",
+            alignment=scribus.ALIGN_LEFT,
+            linespacingmode=Formato.INTERLINEADO_FIJO,
+            linespacing=20,
+            charstyle="estilo_cuerpo_codigo",
+        )
+
         codigo = Impresora.recolectar_codigo()
+        plegaria = "Este es cáliz número {} de mi sangre"
+        pagina = 1
+        ruego = codigo
 
-        for i in range(1, 7):
+        espacio_infinito = Espacio(Puntos.O)
+        espacio_infinito.cuadro_de_texto(
+            Puntos.O, A4, ruego, plegaria.format(pagina), estilo="estilo_codigo"
+        )
+
+        while scribus.textOverflows(plegaria.format(pagina)) == 1:
+            pagina = pagina + 1
             scribus.newPage(-1)
-            scribus.gotoPage(i)
-            plegaria = "Este es cáliz número {} de mi sangre"
-            if i == 1:
-                ruego = codigo
-            else:
-                ruego = ""
+            scribus.gotoPage(pagina)
+
             espacio_infinito = Espacio(Puntos.O)
-            espacio_infinito.cuadro_de_texto(Puntos.O, A4, ruego, plegaria.format(i))
+            espacio_infinito.cuadro_de_texto(
+                Puntos.O, A4, "", plegaria.format(pagina), estilo="estilo_codigo"
+            )
 
-            if i > 1:
-                scribus.linkTextFrames(plegaria.format(i - 1), plegaria.format(i))
-
-            if scribus.getTextLength(plegaria.format(i)) == 0:
-                scribus.deletePage(i)
-                break
+            scribus.linkTextFrames(plegaria.format(pagina - 1), plegaria.format(pagina))
