@@ -1,6 +1,3 @@
-#!/usr/bin/env python2
-# -*- coding: utf-8 -*-
-
 import sys
 import os
 import time
@@ -14,7 +11,7 @@ except ImportError as err:
 
 import math
 
-from obra import Cocina
+from .obra import Cocina
 
 
 class Punto(object):
