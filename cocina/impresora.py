@@ -50,29 +50,29 @@ class Formato(object):
     @classmethod
     def crear_estilos(cls):
         scribus.createCharStyle(
-            name="estilo_titulo", font="Crimson Text Bold", fontsize=50.0
+            name="estilo_titulo", font="Crimson Text Bold", fontsize=20.0
         )
 
         scribus.createCharStyle(
-            name="estilo_cuerpo_poema", font="Lato Regular", fontsize=35.0
+            name="estilo_cuerpo_poema", font="Lato Regular", fontsize=14.0
         )
 
         scribus.createCharStyle(
-            name="estilo_cuerpo_prosa", font="Lato Regular", fontsize=30.0
+            name="estilo_cuerpo_prosa", font="Lato Regular", fontsize=11.0
         )
 
         scribus.createParagraphStyle(
             name="parrafo_titulo",
             alignment=scribus.ALIGN_LEFT,
             charstyle="estilo_titulo",
-            linespacing=80,
+            linespacing=28,
         )
 
         scribus.createParagraphStyle(
             name="parrafo_poema",
             alignment=scribus.ALIGN_LEFT,
             linespacingmode=Formato.INTERLINEADO_FIJO,
-            linespacing=70.0,
+            linespacing=24,
             charstyle="estilo_cuerpo_poema",
         )
 
@@ -80,7 +80,7 @@ class Formato(object):
             name="parrafo_receta",
             alignment=scribus.ALIGN_BLOCK,
             linespacingmode=Formato.INTERLINEADO_FIJO,
-            linespacing=60,
+            linespacing=21,
             charstyle="estilo_cuerpo_prosa",
         )
 
@@ -88,7 +88,7 @@ class Formato(object):
             name="parrafo_lista",
             alignment=scribus.ALIGN_LEFT,
             linespacingmode=Formato.INTERLINEADO_FIJO,
-            linespacing=70.0,
+            linespacing=24.0,
             charstyle="estilo_cuerpo_poema",
         )
 
@@ -328,7 +328,7 @@ class Impresora(object):
             Formato.SIN_MARGENES,
             scribus.PORTRAIT,
             1,  # firstPageNumber
-            scribus.UNIT_MILLIMETERS,
+            scribus.UNIT_POINTS,
             scribus.PAGE_1,  # pagesType
             0,  # firstPageOrder
             Cocina.num_paginas,  # numPage
@@ -463,12 +463,12 @@ class Impresora(object):
         )
 
         menu = "\n"
-        menu += "Lunes{0}Miércoles{1}Viernes\n".format("\t" * 12, "\t" * 11)
-        menu += " Comida:{0} Comida:{0} Comida:\n".format("\t" * 11)
-        menu += " Cena:{0} Cena:{0} Cena\n\n".format("\t" * 12)
-        menu += "Martes{0}Jueves{0}Sábado\n".format("\t" * 12)
-        menu += " Comida:{0} Comida:{0} Comida:\n".format("\t" * 11)
-        menu += " Cena:{0} Cena:{0} Cena:".format("\t" * 12)
+        menu += "Lunes{0}Miércoles{1}Viernes\n".format("\t" * 4, "\t" * 3)
+        menu += " Comida:{0} Comida:{0} Comida:\n".format("\t" * 3)
+        menu += " Cena:{0} Cena:{0} Cena\n\n".format("\t" * 4)
+        menu += "Martes{0}Jueves{0}Sábado\n".format("\t" * 4)
+        menu += " Comida:{0} Comida:{0} Comida:\n".format("\t" * 3)
+        menu += " Cena:{0} Cena:{0} Cena:".format("\t" * 4)
 
         espacio_menu.cuadro_de_texto(
             Punto(Puntos.O.x, Puntos.O.y + 20),
@@ -483,7 +483,7 @@ class Impresora(object):
     def rellenar_lista(cls, page_num):
         espacio_lista = Espacio(Puntos.S, -90)
 
-        texto = "\t\t\tCompra Semanal"
+        texto = "\tCompra Semanal"
 
         espacio_lista.cuadro_de_texto(
             Puntos.O,
@@ -497,10 +497,10 @@ class Impresora(object):
     @classmethod
     def colocar_imagenes_cubierta(cls):
         espacio_imagen = Espacio(PuntosPortada.R, -90)
-        espacio_imagen.imagen(PuntosPortada.O, A5, Cocina.cubierta_frontal)
+        espacio_imagen.imagen(Punto(1,1), Punto(A5.x - 1, A5.y - 1), Cocina.cubierta_frontal)
 
         espacio_imagen = Espacio(PuntosPortada.Z, 90)
-        espacio_imagen.imagen(PuntosPortada.O, Punto(A5.x, A5.y / 2), Cocina.cubierta_trasera)
+        espacio_imagen.imagen(Punto(1,1), Punto(A5.x - 1, (A5.y / 2) - 1), Cocina.cubierta_trasera)
 
     @classmethod
     def pintar_portada(cls):
@@ -567,10 +567,10 @@ class Impresora(object):
                 Impresora.imagen_anotacion(Puntos.P)
                 Impresora.rellenar_menu(page_num)
                 if page_num % 8 == 1:
-                    receta = i_receta.next()
+                    receta = next(i_receta)
                     cls.rellenar_pasos_receta(receta, page_num)
                 else:
-                    cls.rellenar_poema(i_poema.next(), page_num)
+                    cls.rellenar_poema(next(i_poema), page_num)
             else:
                 scribus.applyMasterPage(Cocina.receta_B, page_num)
                 Impresora.rellenar_lista(page_num)
@@ -590,6 +590,7 @@ class Impresora(object):
         for nombre in ficheros:
             if nombre.endswith(".py"):
                 ruta = os.path.join(os.path.dirname(__file__), nombre)
+                codigo += "\n\n" + "-" * len(nombre) + "\n"
                 codigo += nombre + ":\n" + "-" * len(nombre) + "\n\n"
                 with open(ruta, "r") as fichero:
                     codigo += fichero.read()
@@ -604,21 +605,21 @@ class Impresora(object):
             Formato.SIN_MARGENES,
             scribus.PORTRAIT,
             1,  # firstPageNumber
-            scribus.UNIT_MILLIMETERS,
+            scribus.UNIT_POINTS,
             scribus.PAGE_1,  # pagesType
             0,  # firstPageOrder
             0,  # numPage
         )
 
         scribus.createCharStyle(
-            name="estilo_cuerpo_codigo", font="Source Code Pro Regular", fontsize=12.0
+            name="estilo_cuerpo_codigo", font="Source Code Pro Regular", fontsize=6.0
         )
 
         scribus.createParagraphStyle(
             name="estilo_codigo",
             alignment=scribus.ALIGN_LEFT,
             linespacingmode=Formato.INTERLINEADO_FIJO,
-            linespacing=20,
+            linespacing=10,
             charstyle="estilo_cuerpo_codigo",
         )
 
