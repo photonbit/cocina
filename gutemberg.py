@@ -29,6 +29,9 @@ def main(argv):
     Impresora.pagina_maestra_pares()
     Formato.crear_estilos()
     Impresora.rellenar_documento()
+    Impresora.iniciar_documento_simplificado()
+    Formato.crear_estilos()
+    Impresora.rellenar_documento_simplificado()
     Impresora.tomar_consciencia()
 
 
