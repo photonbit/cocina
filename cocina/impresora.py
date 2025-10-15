@@ -1,5 +1,6 @@
 import sys
 import os
+import subprocess
 import time
 
 try:
@@ -691,3 +692,8 @@ class Impresora(object):
             )
 
             scribus.linkTextFrames(plegaria.format(pagina - 1), plegaria.format(pagina))
+        
+        printer = scribus.Printer()
+        printer.file = "cocina.pdf"
+        printer.printNow()
+        subprocess.run(["lpr", "cocina.pdf"])
