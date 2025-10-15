@@ -12,6 +12,23 @@ class Cocina(object):
     receta_A = "recetaDelante"
     receta_B = "recetaDetras"
 
+    traduce = {
+        "ingredientes": "Ingredientes",
+        "unidad": "unidad",
+        "menu-semanal": "Menu semanal",
+        "lista-de-la-compra": "Lista de la compra",
+        "lunes": "Lunes",
+        "martes": "Martes",
+        "miercoles": "Miércoles",
+        "jueves": "Jueves",
+        "viernes": "Viernes",
+        "sabado": "Sábado",
+        "domingo": "Domingo",
+        "almuerzo": "Almuerzo",
+        "cena": "Cena",
+        "de": "de",
+    }
+
     poemas = [
         {
             "titulo": "Espera",

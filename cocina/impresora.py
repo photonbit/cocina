@@ -12,7 +12,7 @@ except ImportError as err:
 
 import math
 
-from .obra import Cocina
+from .trabalho import Cocina
 
 
 class Punto(object):
@@ -446,12 +446,12 @@ class Impresora(object):
         texto_ingredientes = ""
         for ingrediente in receta["ingredientes"]:
             cantidad, unidad, nombre = ingrediente
-            if unidad == "unidad":
+            if unidad == Cocina.traduce["unidad"]:
                 texto_ingredientes += "{} {}\n".format(cantidad, nombre)
             else:
                 if not isinstance(cantidad, int):
                     cantidad = "{}/{}".format(*cantidad.as_integer_ratio())
-                texto_ingredientes += "{} {} de {}\n".format(cantidad, unidad, nombre)
+                texto_ingredientes += "{} {} {} {}\n".format(cantidad, unidad, Cocina.traduce["de"], nombre)
 
         espacio_receta.cuadro_de_texto(
             Punto(Puntos.O.x, Puntos.O.y + 50),
@@ -477,25 +477,27 @@ class Impresora(object):
 
     @classmethod
     def rellenar_menu(cls, page_num):
-        scribus.statusMessage("Rellenando cuadro de técnicas")
+        scribus.statusMessage("Rellenando menú semanal")
         espacio_menu = Espacio(Puntos.O)
 
         espacio_menu.cuadro_de_texto(
             Punto(Puntos.O.x, Puntos.O.y),
             Dimension.E,
-            "Menú Semanal",
+            Cocina.traduce["menu-semanal"],
             "cuadro_titulo_menu_{}".format(page_num),
             "parrafo_titulo",
             False,
         )
 
+        almuerzo = Cocina.traduce["almuerzo"]
+        cena = Cocina.traduce["cena"]
         menu = "\n"
-        menu += "Lunes{0}Miércoles{1}Viernes\n".format("\t" * 4, "\t" * 3)
-        menu += " Comida:{0} Comida:{0} Comida:\n".format("\t" * 3)
-        menu += " Cena:{0} Cena:{0} Cena\n\n".format("\t" * 4)
-        menu += "Martes{0}Jueves{0}Sábado\n".format("\t" * 4)
-        menu += " Comida:{0} Comida:{0} Comida:\n".format("\t" * 3)
-        menu += " Cena:{0} Cena:{0} Cena:".format("\t" * 4)
+        menu += f"{Cocina.traduce['lunes']:<10}{Cocina.traduce['miercoles']:<10}{Cocina.traduce['viernes']:<10}\n"
+        menu += f" {almuerzo:<10}{almuerzo:<10}{almuerzo:<10}\n"
+        menu += f" {cena:<10}{cena:<10}{cena:<10}\n\n"
+        menu += f"{Cocina.traduce['martes']:<10}{Cocina.traduce['jueves']:<10}{Cocina.traduce['sabado']:<10}\n"
+        menu += f" {almuerzo:<10}{almuerzo:<10}{almuerzo:<10}\n"
+        menu += f" {cena:<10}{cena:<10}{cena:<10}"
 
         espacio_menu.cuadro_de_texto(
             Punto(Puntos.O.x, Puntos.O.y + 20),
@@ -510,7 +512,7 @@ class Impresora(object):
     def rellenar_lista(cls, page_num):
         espacio_lista = Espacio(Puntos.S, -90)
 
-        texto = "\tCompra Semanal"
+        texto = "Weekly Shopping List"
 
         espacio_lista.cuadro_de_texto(
             Puntos.O,
